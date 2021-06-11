@@ -14,14 +14,13 @@ import androidx.core.app.NotificationCompat;
 
 import static android.content.Context.AUDIO_SERVICE;
 import static android.media.AudioManager.STREAM_MUSIC;
-
 public class Charged {
 
     public static void fullCharged(Context context, String music) throws Exception {
+        AudioManager audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+        audioManager.setStreamVolume(STREAM_MUSIC, 15, AudioManager.FLAG_PLAY_SOUND);
         MediaPlayer mediaPlayer = MainActivity.mediaPlayer;
         if (!mediaPlayer.isPlaying()) {
-            AudioManager audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
-            audioManager.setStreamVolume(STREAM_MUSIC, 15, AudioManager.FLAG_PLAY_SOUND);
             if (music.equals("Default")) {
                 Uri ringtone = RingtoneManager.getActualDefaultRingtoneUri(context.getApplicationContext(), RingtoneManager.TYPE_RINGTONE);
                 mediaPlayer.setDataSource(context, ringtone);

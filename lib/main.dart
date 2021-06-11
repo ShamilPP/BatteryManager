@@ -1,6 +1,7 @@
 import 'package:battery_manager/mainScreen.dart';
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     themeCreate(context);
+    permissionCheck();
     return MaterialApp(
       title: "Battery manager",
       home: MainScreen(),
@@ -48,6 +50,12 @@ class MyApp extends StatelessWidget {
           Provider.of<MyProvider>(context, listen: false)
               .sharedPreferences!
               .getInt("Font")!;
+    }
+  }
+
+  void permissionCheck() async {
+    if (await Permission.storage.isDenied) {
+      Permission.storage.request();
     }
   }
 }
