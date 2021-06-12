@@ -2,6 +2,7 @@
     package="com.shamil.battery_manager">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:icon="@mipmap/icon_round"
@@ -34,7 +35,14 @@
             </intent-filter>
         </activity>
         <service android:name=".CheckService" />
-        <receiver android:name="RestartService" />
+
+        <receiver android:name=".RestartService" />
+        <receiver android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
