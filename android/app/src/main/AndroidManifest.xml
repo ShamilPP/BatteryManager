@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:icon="@mipmap/icon"
+        android:icon="@mipmap/icon_round"
         android:label="Battery manager">
         <activity
             android:name=".MainActivity"

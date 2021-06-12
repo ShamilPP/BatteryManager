@@ -36,7 +36,7 @@ public class Charged {
 
     private static void showNotification(Context context) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, "Battery")
-                .setSmallIcon(R.mipmap.icon)
+                .setSmallIcon(R.mipmap.icon_round)
                 .setContentTitle("Battery Charged")
                 .setContentText("Please remove plugged charger")
                 .setOngoing(true)
