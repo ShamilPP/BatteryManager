@@ -8,4 +8,19 @@ class MyProvider extends ChangeNotifier {
   int maxCharge = 0;
   String music = "music";
   SharedPreferences? sharedPreferences;
+
+  void setPrimaryColor(int color) {
+    primaryColor = color;
+    notifyListeners();
+  }
+
+  void setBackgroundColor(int color) {
+    backgroundColor = color;
+    notifyListeners();
+  }
+
+  void setFontColor(int color) {
+    fontColor = color;
+    notifyListeners();
+  }
 }

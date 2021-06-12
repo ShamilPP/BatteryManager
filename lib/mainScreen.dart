@@ -23,74 +23,78 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
-      appBar: AppBar(
+    return Consumer<MyProvider>(
+      builder: (BuildContext context, provider, Widget? child) {
+        return Scaffold(
           backgroundColor: Color(
-              Provider.of<MyProvider>(context, listen: false).primaryColor),
-          title: Text(
-            "Battery manager",
-            style: TextStyle(
-                color: Color(
-                    Provider.of<MyProvider>(context, listen: false).fontColor)),
-          )),
-      body: Container(
-        child: Stack(
-          children: [
-            Positioned(
-              right: MediaQuery.of(context).size.width -
-                  MediaQuery.of(context).size.width +
-                  50,
-              top: 50,
-              child: Container(
-                width: MediaQuery.of(context).size.width - 100,
-                height: MediaQuery.of(context).size.width - 100,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width - 100,
-                      height: MediaQuery.of(context).size.width - 100,
-                      child: CircularProgressIndicator(
-                        color: Color(
-                            Provider.of<MyProvider>(context, listen: false)
-                                .primaryColor),
-                        strokeWidth: 15,
-                        value: batteryCharge / 100,
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        "$batteryCharge %",
-                        style: TextStyle(
-                            fontSize: 50,
-                            fontFamily: "Font",
+              Provider.of<MyProvider>(context, listen: true).backgroundColor),
+          appBar: AppBar(
+              backgroundColor: Color(
+                  Provider.of<MyProvider>(context, listen: false).primaryColor),
+              title: Text(
+                "Battery manager",
+                style: TextStyle(
+                    color: Color(Provider.of<MyProvider>(context, listen: false)
+                        .fontColor)),
+              )),
+          body: Container(
+            child: Stack(
+              children: [
+                Positioned(
+                  right: MediaQuery.of(context).size.width -
+                      MediaQuery.of(context).size.width +
+                      50,
+                  top: 50,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 100,
+                    height: MediaQuery.of(context).size.width - 100,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width - 100,
+                          height: MediaQuery.of(context).size.width - 100,
+                          child: CircularProgressIndicator(
                             color: Color(
                                 Provider.of<MyProvider>(context, listen: false)
+                                    .primaryColor),
+                            strokeWidth: 15,
+                            value: batteryCharge / 100,
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            "$batteryCharge %",
+                            style: TextStyle(
+                                fontSize: 50,
+                                fontFamily: "Font",
+                                color: Color(Provider.of<MyProvider>(context,
+                                        listen: false)
                                     .fontColor)),
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                Positioned(
+                  bottom: MediaQuery.of(context).size.height / 13,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ChangeMxBattery(),
+                        MusicChange(),
+                        ChangeTheme(),
+                      ],
+                    ),
+                  ),
+                )
+              ],
             ),
-            Positioned(
-              bottom: MediaQuery.of(context).size.height / 13,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ChangeMxBattery(),
-                    MusicChange(),
-                    ChangeTheme(),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

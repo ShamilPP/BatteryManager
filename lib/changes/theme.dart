@@ -108,18 +108,17 @@ class _ChangeThemeState extends State<ChangeTheme> {
   void changeColor(String provider, Color changedColor) {
     setState(() {
       if (provider == "Primary") {
-        Provider.of<MyProvider>(context, listen: false).primaryColor =
-            changedColor.value;
+        Provider.of<MyProvider>(context, listen: false)
+            .setPrimaryColor(changedColor.value);
       } else if (provider == "Background") {
-        Provider.of<MyProvider>(context, listen: false).backgroundColor =
-            changedColor.value;
+        Provider.of<MyProvider>(context, listen: false)
+            .setBackgroundColor(changedColor.value);
       }
       if (provider == "Font") {
-        Provider.of<MyProvider>(context, listen: false).fontColor =
-            changedColor.value;
+        Provider.of<MyProvider>(context, listen: false)
+            .setFontColor(changedColor.value);
       }
     });
-    Provider.of<MyProvider>(context, listen: false).notifyListeners();
   }
 
   selectColor(String provider) {
