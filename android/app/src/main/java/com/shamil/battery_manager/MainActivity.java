@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.BatteryManager;
@@ -18,14 +17,12 @@ public class MainActivity extends FlutterActivity {
     public static MediaPlayer mediaPlayer = new MediaPlayer();
     private static final String CHANNEL = "battery";
     public static SharedPreferences sharedpreferences;
-    public static AlarmManager alarmManager;
     SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         sharedpreferences = getSharedPreferences("Battery", Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
         if (!sharedpreferences.contains("MaxCharge")) {
@@ -33,22 +30,13 @@ public class MainActivity extends FlutterActivity {
             editor.putString("MusicPath", "Default");
             editor.apply();
         }
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = registerReceiver(null, intentFilter);
+        int second = 5;
 
-        int deviceStatus = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-
-        if (deviceStatus == BatteryManager.BATTERY_PLUGGED_AC | deviceStatus == BatteryManager.BATTERY_PLUGGED_USB) {
-            Intent i = new Intent(this, CheckService.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                    i, 0);
-
-            int second = 5;
-
-            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-            alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
-        }
+        Intent i = new Intent(this, RestartService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                i, 0);
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
     }
 
 

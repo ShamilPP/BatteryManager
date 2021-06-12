@@ -1,29 +1,74 @@
 package com.shamil.battery_manager;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.IBinder;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
+public class CheckService extends Service {
 
-import static android.content.Context.ALARM_SERVICE;
+    public static Runnable runnable = null;
+    public Context context = this;
+    public Handler handler = null;
 
-public class CheckService extends BroadcastReceiver {
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onReceive(Context context, Intent intent) {
-        try {
-            Intent i = new Intent(context, CheckService.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
-                    i, 0);
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
+    @Override
+    public void onDestroy() {
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(new Intent(context, CheckService.class));
+                } else {
+                    startService(new Intent(context, CheckService.class));
+                }
+            }
+        }, 1000);
+
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+        startService(restartServiceIntent);
+        super.onTaskRemoved(rootIntent);
+    }
+
+    @Override
+    public void onCreate() {
+
+        handler = new Handler();
+        runnable = new Runnable() {
+            public void run() {
+                getChargeAndRing();
+                handler.postDelayed(runnable, 1000);
+            }
+        };
+
+        handler.postDelayed(runnable, 1000);
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        onTaskRemoved(intent);
+        return START_STICKY;
+    }
+
+    void getChargeAndRing() {
+        try {
             IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent batteryStatus = context.registerReceiver(null, intentFilter);
 
@@ -41,12 +86,9 @@ public class CheckService extends BroadcastReceiver {
                         Toast.makeText(context, e.toString() + "\nProblem detected", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    int second = 5;
-                    MainActivity.alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                    MainActivity.alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
+                    Charged.stopAlert(context);
                 }
             } else {
-                MainActivity.alarmManager.cancel(pendingIntent);
                 Charged.stopAlert(context);
             }
         } catch (Exception e) {
