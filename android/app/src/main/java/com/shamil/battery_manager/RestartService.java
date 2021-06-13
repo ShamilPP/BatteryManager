@@ -7,23 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import static android.content.Context.ALARM_SERVICE;
+
 public class RestartService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.stopService(new Intent(context, CheckService.class));
             context.startForegroundService(new Intent(context, CheckService.class));
         } else {
-            context.stopService(new Intent(context, CheckService.class));
             context.startService(new Intent(context, CheckService.class));
         }
-        int second = 300;
+        int second = 5;
 
         Intent i = new Intent(context, RestartService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 i, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
     }
 }

@@ -32,6 +32,12 @@ public class MainActivity extends FlutterActivity {
             editor.apply();
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, CheckService.class));
+        } else {
+            startService(new Intent(this, CheckService.class));
+        }
+
         int second = 5;
 
         Intent i = new Intent(this, RestartService.class);

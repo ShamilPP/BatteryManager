@@ -1,5 +1,7 @@
 package com.shamil.battery_manager;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +27,15 @@ public class CheckService extends Service {
     @Override
     public void onDestroy() {
 
+        int second = 5;
+
+        Intent i = new Intent(context, RestartService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                i, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
+
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -40,6 +51,16 @@ public class CheckService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
+
+        int second = 5;
+
+        Intent i = new Intent(context, RestartService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                i, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
+
+
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
         startService(restartServiceIntent);

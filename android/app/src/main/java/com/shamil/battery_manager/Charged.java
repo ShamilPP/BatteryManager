@@ -8,7 +8,6 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -17,20 +16,29 @@ import static android.media.AudioManager.STREAM_MUSIC;
 public class Charged {
 
     public static void fullCharged(Context context, String music) throws Exception {
-        AudioManager audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
-        audioManager.setStreamVolume(STREAM_MUSIC, 15, AudioManager.FLAG_PLAY_SOUND);
-        MediaPlayer mediaPlayer = MainActivity.mediaPlayer;
-        if (!mediaPlayer.isPlaying()) {
-            if (music.equals("Default")) {
-                Uri ringtone = RingtoneManager.getActualDefaultRingtoneUri(context.getApplicationContext(), RingtoneManager.TYPE_RINGTONE);
-                mediaPlayer.setDataSource(context, ringtone);
-            } else {
-                mediaPlayer.setDataSource(context, Uri.parse(music));
+        try {
+
+            AudioManager audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+            audioManager.setStreamVolume(STREAM_MUSIC, 15, AudioManager.FLAG_PLAY_SOUND);
+            MediaPlayer mediaPlayer = MainActivity.mediaPlayer;
+            if (!mediaPlayer.isPlaying()) {
+                if (music.equals("Default")) {
+                    Uri ringtone = RingtoneManager.getActualDefaultRingtoneUri(context.getApplicationContext(), RingtoneManager.TYPE_RINGTONE);
+                    mediaPlayer.setDataSource(context, ringtone);
+                } else {
+                    mediaPlayer.setDataSource(context, Uri.parse(music));
+                }
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                mediaPlayer.setLooping(true);
+                showNotification(context);
             }
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-            mediaPlayer.setLooping(true);
-            showNotification(context);
+        } catch (Exception e) {
+            int resID = context.getResources().getIdentifier("ring", "raw", context.getPackageName());
+
+            MainActivity.mediaPlayer = MediaPlayer.create(context, resID);
+            MainActivity.mediaPlayer.start();
+
         }
     }
 
