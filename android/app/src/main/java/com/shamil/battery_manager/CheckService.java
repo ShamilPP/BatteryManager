@@ -48,7 +48,6 @@ public class CheckService extends Service {
 
     @Override
     public void onCreate() {
-
         handler = new Handler();
         runnable = new Runnable() {
             public void run() {

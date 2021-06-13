@@ -12,11 +12,13 @@ public class RestartService extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.stopService(new Intent(context, CheckService.class));
             context.startForegroundService(new Intent(context, CheckService.class));
         } else {
+            context.stopService(new Intent(context, CheckService.class));
             context.startService(new Intent(context, CheckService.class));
         }
-        int second = 100;
+        int second = 300;
 
         Intent i = new Intent(context, RestartService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
