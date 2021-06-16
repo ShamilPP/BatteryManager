@@ -1,14 +1,13 @@
 package com.shamil.battery_manager;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -31,20 +30,8 @@ public class MainActivity extends FlutterActivity {
             editor.putString("MusicPath", "Default");
             editor.apply();
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(new Intent(this, CheckService.class));
-        } else {
-            startService(new Intent(this, CheckService.class));
-        }
-
-        int second = 5;
-
-        Intent i = new Intent(this, RestartService.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                i, 0);
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + second * 1000, pendingIntent);
+        Intent serviceIntent = new Intent(this, MyService.class);
+        startService(serviceIntent);
     }
 
 
@@ -95,5 +82,4 @@ public class MainActivity extends FlutterActivity {
     int getMaxCharge() {
         return sharedpreferences.getInt("MaxCharge", 0);
     }
-
 }
