@@ -5,6 +5,9 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 import static android.content.Context.AUDIO_SERVICE;
 import static android.media.AudioManager.STREAM_MUSIC;
@@ -27,16 +30,20 @@ public class Charged {
                 mediaPlayer.setLooping(true);
             }
         } catch (Exception e) {
-            int resID = context.getResources().getIdentifier("ring", "raw", context.getPackageName());
-
-            MainActivity.mediaPlayer = MediaPlayer.create(context, resID);
-            MainActivity.mediaPlayer.start();
-
+            try {
+                Uri ringtone = RingtoneManager.getActualDefaultRingtoneUri(context.getApplicationContext(), RingtoneManager.TYPE_RINGTONE);
+                MainActivity.mediaPlayer.setDataSource(context, ringtone);
+                MainActivity.mediaPlayer.prepare();
+                MainActivity.mediaPlayer.start();
+                MainActivity.mediaPlayer.setLooping(true);
+            } catch (IOException ioException) {
+                Toast.makeText(context, "Battery Manager Error Detected", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
 
-    public static void stopAlert(Context context) {
+    public static void stopAlert() {
         MediaPlayer mediaPlayer = MainActivity.mediaPlayer;
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.reset();

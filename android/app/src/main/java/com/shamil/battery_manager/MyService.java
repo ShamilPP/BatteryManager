@@ -83,10 +83,10 @@ public class MyService extends Service {
             if (batLevel >= maxBattery) {
                 Charged.fullCharged(context, musicPath);
             } else {
-                Charged.stopAlert(context);
+                Charged.stopAlert();
             }
         } else {
-            Charged.stopAlert(context);
+            Charged.stopAlert();
         }
     }
 }
