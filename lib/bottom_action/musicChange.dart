@@ -1,7 +1,5 @@
 import 'package:battery_manager/provider/myProvider.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class MusicChange extends StatefulWidget {
@@ -11,9 +9,8 @@ class MusicChange extends StatefulWidget {
   _MusicChangeState createState() => _MusicChangeState();
 }
 
-class _MusicChangeState extends State<MusicChange>  with SingleTickerProviderStateMixin {
-  static const platform = const MethodChannel('battery');
-
+class _MusicChangeState extends State<MusicChange>
+    with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
 
@@ -21,7 +18,7 @@ class _MusicChangeState extends State<MusicChange>  with SingleTickerProviderSta
   void initState() {
     controller =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
-    offset = Tween<Offset>(begin: Offset(0.0, -4.0), end: Offset.zero)
+    offset = Tween<Offset>(begin: Offset(-4.0, 0.0), end: Offset.zero)
         .animate(controller);
     controller.forward();
     super.initState();
@@ -50,7 +47,7 @@ class _MusicChangeState extends State<MusicChange>  with SingleTickerProviderSta
           splashColor:
               Color(Provider.of<MyProvider>(context, listen: false).fontColor),
           onTap: () {
-            pickAndSet();
+            Provider.of<MyProvider>(context, listen: false).pickAndSet(context);
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -82,23 +79,5 @@ class _MusicChangeState extends State<MusicChange>  with SingleTickerProviderSta
         ),
       ),
     );
-  }
-
-  void pickAndSet() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
-    );
-
-    if (result != null) {
-      String path = result.files.single.path.toString();
-      if (path.split('.').last == "mp3") {
-        setState(() {
-          Provider.of<MyProvider>(context, listen: false).music = path;
-        });
-        await platform.invokeMethod("setMusic", {"path": path});
-      }
-    } else {
-      // User canceled the picker
-    }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:battery_manager/batteryProgress.dart';
-import 'package:battery_manager/changes/changeMaxBattery.dart';
-import 'package:battery_manager/changes/musicChange.dart';
-import 'package:battery_manager/changes/theme.dart';
+import 'package:battery_manager/bottom_action//musicChange.dart';
+import 'package:battery_manager/bottom_action/changeMaxBattery.dart';
+import 'package:battery_manager/bottom_action/openSettings.dart';
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,49 +24,45 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MyProvider>(
-      builder: (BuildContext context, provider, Widget? child) {
-        return Scaffold(
+    return Scaffold(
+      backgroundColor:
+          Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
+      appBar: AppBar(
           backgroundColor: Color(
-              Provider.of<MyProvider>(context, listen: true).backgroundColor),
-          appBar: AppBar(
-              backgroundColor: Color(
-                  Provider.of<MyProvider>(context, listen: false).primaryColor),
-              title: Text(
-                "Battery manager",
-                style: TextStyle(
-                    color: Color(Provider.of<MyProvider>(context, listen: false)
-                        .fontColor)),
-              )),
-          body: Container(
-            child: Stack(
-              children: [
-                Positioned(
-                  right: MediaQuery.of(context).size.width -
-                      MediaQuery.of(context).size.width +
-                      50,
-                  top: 50,
-                  child: BatteryProgress(batteryCharge),
-                ),
-                Positioned(
-                  bottom: MediaQuery.of(context).size.height / 13,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ChangeMxBattery(),
-                        MusicChange(),
-                        ChangeTheme(),
-                      ],
-                    ),
-                  ),
-                )
-              ],
+              Provider.of<MyProvider>(context, listen: false).primaryColor),
+          title: Text(
+            "Battery manager",
+            style: TextStyle(
+                color: Color(
+                    Provider.of<MyProvider>(context, listen: false).fontColor)),
+          )),
+      body: Container(
+        child: Stack(
+          children: [
+            Positioned(
+              right: MediaQuery.of(context).size.width -
+                  MediaQuery.of(context).size.width +
+                  50,
+              top: 50,
+              child: BatteryProgress(batteryCharge),
             ),
-          ),
-        );
-      },
+            Positioned(
+              bottom: MediaQuery.of(context).size.height / 13,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ChangeMaxBattery(),
+                    OpenSettings(),
+                    MusicChange(),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 

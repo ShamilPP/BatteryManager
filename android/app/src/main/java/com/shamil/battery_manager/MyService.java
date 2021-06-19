@@ -8,15 +8,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
 
 public class MyService extends Service {
 
-    public static Runnable runnable;
+    Runnable runnable;
     Handler handler;
     Context context = this;
 
