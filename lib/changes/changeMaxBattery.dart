@@ -8,55 +8,72 @@ class ChangeMxBattery extends StatefulWidget {
   _ChangeMxBatteryState createState() => _ChangeMxBatteryState();
 }
 
-class _ChangeMxBatteryState extends State<ChangeMxBattery> {
+class _ChangeMxBatteryState extends State<ChangeMxBattery>
+    with SingleTickerProviderStateMixin {
   static const platform = const MethodChannel('battery');
+
+  late AnimationController controller;
+  late Animation<Offset> offset;
+
+  @override
+  void initState() {
+    controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    offset = Tween<Offset>(begin: Offset(4.0, 0.0), end: Offset.zero)
+        .animate(controller);
+    controller.forward();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 120,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              width: 3,
-              color: Color(Provider.of<MyProvider>(context, listen: false)
-                  .primaryColor))),
-      child: InkWell(
-        splashColor:
-            Color(Provider.of<MyProvider>(context, listen: false).fontColor),
-        onTap: () {
-          changeMaxBattery();
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Icon(
-              Icons.battery_full_outlined,
-              size: 50,
-              color: Colors.green,
-            ),
-            Text(
-              "Max charge",
-              maxLines: 1,
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: Color(Provider.of<MyProvider>(context, listen: false)
-                      .fontColor)),
-            ),
-            Text(
-              Provider.of<MyProvider>(context, listen: false)
-                      .maxCharge
-                      .toString() +
-                  " %",
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: Color(Provider.of<MyProvider>(context, listen: false)
-                      .fontColor)),
-            ),
-          ],
+    return SlideTransition(
+      position: offset,
+      child: Container(
+        width: 100,
+        height: 120,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                width: 3,
+                color: Color(Provider.of<MyProvider>(context, listen: false)
+                    .primaryColor))),
+        child: InkWell(
+          splashColor:
+              Color(Provider.of<MyProvider>(context, listen: false).fontColor),
+          onTap: () {
+            changeMaxBattery();
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(
+                Icons.battery_full_outlined,
+                size: 50,
+                color: Colors.green,
+              ),
+              Text(
+                "Max charge",
+                maxLines: 1,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: Color(Provider.of<MyProvider>(context, listen: false)
+                        .fontColor)),
+              ),
+              Text(
+                Provider.of<MyProvider>(context, listen: false)
+                        .maxCharge
+                        .toString() +
+                    " %",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: Color(Provider.of<MyProvider>(context, listen: false)
+                        .fontColor)),
+              ),
+            ],
+          ),
         ),
       ),
     );

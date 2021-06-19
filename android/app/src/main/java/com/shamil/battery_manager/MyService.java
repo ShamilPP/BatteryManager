@@ -20,6 +20,26 @@ public class MyService extends Service {
     Handler handler;
     Context context = this;
 
+    public static void CheckAndRing(Context context) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences("Battery", Context.MODE_PRIVATE);
+        int maxBattery = sharedpreferences.getInt("MaxCharge", 0);
+        String musicPath = sharedpreferences.getString("MusicPath", null);
+        BatteryManager bm = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
+        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        int chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB || chargePlug == BatteryManager.BATTERY_PLUGGED_AC) {
+            if (batLevel >= maxBattery) {
+                Charged.fullCharged(context, musicPath);
+            } else {
+                Charged.stopAlert();
+            }
+        } else {
+            Charged.stopAlert();
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -68,25 +88,5 @@ public class MyService extends Service {
         Intent serviceIntent = new Intent(this, MyService.class);
         startService(serviceIntent);
         super.onDestroy();
-    }
-
-    public static void CheckAndRing(Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("Battery", Context.MODE_PRIVATE);
-        int maxBattery = sharedpreferences.getInt("MaxCharge", 0);
-        String musicPath = sharedpreferences.getString("MusicPath", null);
-        BatteryManager bm = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
-        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, ifilter);
-        int chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-        if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB || chargePlug == BatteryManager.BATTERY_PLUGGED_AC) {
-            if (batLevel >= maxBattery) {
-                Charged.fullCharged(context, musicPath);
-            } else {
-                Charged.stopAlert();
-            }
-        } else {
-            Charged.stopAlert();
-        }
     }
 }

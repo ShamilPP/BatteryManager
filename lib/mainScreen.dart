@@ -1,3 +1,4 @@
+import 'package:battery_manager/batteryProgress.dart';
 import 'package:battery_manager/changes/changeMaxBattery.dart';
 import 'package:battery_manager/changes/musicChange.dart';
 import 'package:battery_manager/changes/theme.dart';
@@ -11,7 +12,7 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin{
   int batteryCharge = 1;
   static const platform = const MethodChannel('battery');
 
@@ -45,36 +46,7 @@ class _MainScreenState extends State<MainScreen> {
                       MediaQuery.of(context).size.width +
                       50,
                   top: 50,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 100,
-                    height: MediaQuery.of(context).size.width - 100,
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width - 100,
-                          height: MediaQuery.of(context).size.width - 100,
-                          child: CircularProgressIndicator(
-                            color: Color(
-                                Provider.of<MyProvider>(context, listen: false)
-                                    .primaryColor),
-                            strokeWidth: 15,
-                            value: batteryCharge / 100,
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            "$batteryCharge %",
-                            style: TextStyle(
-                                fontSize: 50,
-                                fontFamily: "Font",
-                                color: Color(Provider.of<MyProvider>(context,
-                                        listen: false)
-                                    .fontColor)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: BatteryProgress(batteryCharge),
                 ),
                 Positioned(
                   bottom: MediaQuery.of(context).size.height / 13,

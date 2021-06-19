@@ -8,98 +8,115 @@ class ChangeTheme extends StatefulWidget {
   _ChangeThemeState createState() => _ChangeThemeState();
 }
 
-class _ChangeThemeState extends State<ChangeTheme> {
+class _ChangeThemeState extends State<ChangeTheme>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<Offset> offset;
+
+  @override
+  void initState() {
+    controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    offset = Tween<Offset>(begin: Offset(-4.0, 0.0), end: Offset.zero)
+        .animate(controller);
+    controller.forward();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 120,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              width: 3,
-              color: Color(Provider.of<MyProvider>(context, listen: false)
-                  .primaryColor))),
-      child: InkWell(
-        splashColor:
-            Color(Provider.of<MyProvider>(context, listen: false).fontColor),
-        onTap: () {
-          showDialog<void>(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                backgroundColor: Color(
-                    Provider.of<MyProvider>(context, listen: false)
-                        .backgroundColor),
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            selectColor("Primary");
-                          },
-                          child: Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Primary color",
-                                style: TextStyle(
-                                    color: Color(Provider.of<MyProvider>(
-                                            context,
-                                            listen: false)
-                                        .fontColor)),
-                              ))),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            selectColor("Background");
-                          },
-                          child: Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Background color",
+    return SlideTransition(
+      position: offset,
+      child: Container(
+        width: 100,
+        height: 120,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                width: 3,
+                color: Color(Provider.of<MyProvider>(context, listen: false)
+                    .primaryColor))),
+        child: InkWell(
+          splashColor:
+              Color(Provider.of<MyProvider>(context, listen: false).fontColor),
+          onTap: () {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: Color(
+                      Provider.of<MyProvider>(context, listen: false)
+                          .backgroundColor),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              selectColor("Primary");
+                            },
+                            child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Primary color",
                                   style: TextStyle(
                                       color: Color(Provider.of<MyProvider>(
                                               context,
                                               listen: false)
-                                          .fontColor))))),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            selectColor("Font");
-                          },
-                          child: Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Font color",
-                                  style: TextStyle(
-                                      color: Color(Provider.of<MyProvider>(
-                                              context,
-                                              listen: false)
-                                          .fontColor))))),
-                    ],
+                                          .fontColor)),
+                                ))),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              selectColor("Background");
+                            },
+                            child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Background color",
+                                    style: TextStyle(
+                                        color: Color(Provider.of<MyProvider>(
+                                                context,
+                                                listen: false)
+                                            .fontColor))))),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              selectColor("Font");
+                            },
+                            child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Font color",
+                                    style: TextStyle(
+                                        color: Color(Provider.of<MyProvider>(
+                                                context,
+                                                listen: false)
+                                            .fontColor))))),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Icon(
-              Icons.wb_sunny_outlined,
-              size: 50,
-              color: Colors.orange,
-            ),
-            Text(
-              "Theme",
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: Color(Provider.of<MyProvider>(context, listen: false)
-                      .fontColor)),
-            ),
-          ],
+                );
+              },
+            );
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(
+                Icons.wb_sunny_outlined,
+                size: 50,
+                color: Colors.orange,
+              ),
+              Text(
+                "Theme",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: Color(Provider.of<MyProvider>(context, listen: false)
+                        .fontColor)),
+              ),
+            ],
+          ),
         ),
       ),
     );
