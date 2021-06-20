@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class OpenSettings extends StatefulWidget {
-
   const OpenSettings({Key? key}) : super(key: key);
 
   @override

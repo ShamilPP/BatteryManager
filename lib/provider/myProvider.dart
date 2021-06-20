@@ -11,6 +11,8 @@ class MyProvider extends ChangeNotifier {
   int fontColor = Colors.black.value;
   int maxCharge = 0;
   String music = "music";
+  String batteryMAH = "10 mAh";
+  String batteryHealth = "GOOD";
   SharedPreferences? sharedPreferences;
 
   void setPrimaryColor(int color) {

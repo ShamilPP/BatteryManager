@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -30,6 +31,9 @@ public class MainActivity extends FlutterActivity {
             editor.putString("MusicPath", "Default");
             editor.apply();
         }
+
+        Toast.makeText(this, getBatteryHealth(), Toast.LENGTH_SHORT).show();
+
         Intent serviceIntent = new Intent(this, MyService.class);
         startService(serviceIntent);
     }
@@ -44,6 +48,10 @@ public class MainActivity extends FlutterActivity {
                             if (call.method.equals("getBatteryLevel")) {
                                 int batteryLevel = getBatteryLevel();
                                 result.success(batteryLevel);
+                            } else if (call.method.equals("getMAH")) {
+                                result.success(getBatteryMAH());
+                            } else if (call.method.equals("getHealth")) {
+                                result.success(getBatteryHealth());
                             } else if (call.method.equals("getMusic")) {
                                 result.success(getMusicPath());
                             } else if (call.method.equals("setMusic")) {
@@ -55,6 +63,47 @@ public class MainActivity extends FlutterActivity {
                             }
                         }
                 );
+    }
+
+    String getBatteryHealth() {
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent intent = registerReceiver(null, intentFilter);
+        int deviceHealth = intent.getIntExtra(BatteryManager.EXTRA_HEALTH, 0);
+
+        if (deviceHealth == BatteryManager.BATTERY_HEALTH_COLD) {
+            return "Cold";
+        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_DEAD) {
+            return "Dead";
+        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_GOOD) {
+            return "Good";
+        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
+            return "OverHeat";
+        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE) {
+            return "Over voltage";
+        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_UNKNOWN) {
+            return "Unknown";
+        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE) {
+            return "Unspecified Failure";
+        }
+        return "Getting Problem";
+
+
+    }
+
+    String getBatteryMAH() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            BatteryManager mBatteryManager = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
+            int chargeCounter = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+            int capacity = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+            if (chargeCounter == Integer.MIN_VALUE || capacity == Integer.MIN_VALUE) {
+                return "Getting Problem";
+            } else {
+                return (chargeCounter / capacity / 10) + " mAh";
+            }
+        }
+        return "Getting Problem";
     }
 
     private int getBatteryLevel() {
