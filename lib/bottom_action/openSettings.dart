@@ -27,6 +27,12 @@ class _OpenSettingsState extends State<OpenSettings>
 
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<MyProvider>(context, listen: false).music != "Default") {
+      String fileNameWithExt =
+          Provider.of<MyProvider>(context, listen: false).music.split('/').last;
+      Provider.of<MyProvider>(context, listen: false).music =
+          fileNameWithExt.split('.').first;
+    }
     return SlideTransition(
       position: offset,
       child: Container(

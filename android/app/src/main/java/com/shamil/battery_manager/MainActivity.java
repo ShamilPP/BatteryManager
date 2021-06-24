@@ -32,8 +32,6 @@ public class MainActivity extends FlutterActivity {
             editor.apply();
         }
 
-        Toast.makeText(this, getBatteryHealth(), Toast.LENGTH_SHORT).show();
-
         Intent serviceIntent = new Intent(this, MyService.class);
         startService(serviceIntent);
     }
