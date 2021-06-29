@@ -1,5 +1,6 @@
 package com.shamil.battery_manager;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -8,13 +9,18 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.content.ContextCompat;
-
 import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
 
-public class BootReceiver extends BroadcastReceiver {
+
+public class ServiceChecker extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        int second = 2;
+
+        if (!isMyServiceRunning(context, MyService.class)) {
+            ContextCompat.startForegroundService(context, new Intent(context, MyService.class));
+        }
+        int second = 600;
 
         Intent i = new Intent(context, ServiceChecker.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,

@@ -12,33 +12,14 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
+import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
 
 
 public class MyService extends Service {
 
-    Runnable runnable;
-    Handler handler;
     Context context = this;
-
-    public static void CheckAndRing(Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("Battery", Context.MODE_PRIVATE);
-        int maxBattery = sharedpreferences.getInt("MaxCharge", 0);
-        String musicPath = sharedpreferences.getString("MusicPath", null);
-        BatteryManager bm = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
-        int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, intentFilter);
-        int chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-        if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB || chargePlug == BatteryManager.BATTERY_PLUGGED_AC) {
-            if (batLevel >= maxBattery) {
-                Charged.fullCharged(context, musicPath);
-            } else {
-                Charged.stopAlert();
-            }
-        } else {
-            Charged.stopAlert();
-        }
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,21 +28,10 @@ public class MyService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Intent serviceIntent = new Intent(this, MyService.class);
-        startService(serviceIntent);
+        if (!isMyServiceRunning(context, MyService.class)) {
+            ContextCompat.startForegroundService(context, new Intent(context, MyService.class));
+        }
         super.onTaskRemoved(rootIntent);
-    }
-
-    @Override
-    public void onCreate() {
-        handler = new Handler();
-        runnable = () -> {
-            CheckAndRing(context);
-            handler.postDelayed(runnable, 1000);
-        };
-
-        handler.postDelayed(runnable, 1000);
-        super.onCreate();
     }
 
     @Override
@@ -79,14 +49,16 @@ public class MyService extends Service {
                 .build();
 
         startForeground(1, notification);
+        registerReceiver(new BatteryReceiver(), new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Intent serviceIntent = new Intent(this, MyService.class);
-        startService(serviceIntent);
+        if (!isMyServiceRunning(context, MyService.class)) {
+            ContextCompat.startForegroundService(context, new Intent(context, MyService.class));
+        }
         super.onDestroy();
     }
 }

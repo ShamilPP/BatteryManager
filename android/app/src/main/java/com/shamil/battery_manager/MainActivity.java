@@ -1,14 +1,22 @@
 package com.shamil.battery_manager;
 
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -24,6 +32,17 @@ public class MainActivity extends FlutterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Intent intent = new Intent();
+        String packageName = getPackageName();
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                startActivity(intent);
+            }
+        }
+
         sharedpreferences = getSharedPreferences("Battery", Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
         if (!sharedpreferences.contains("MaxCharge")) {
@@ -32,10 +51,23 @@ public class MainActivity extends FlutterActivity {
             editor.apply();
         }
 
-        Intent serviceIntent = new Intent(this, MyService.class);
-        startService(serviceIntent);
+        int second = 2;
+
+        Intent i = new Intent(this, ServiceChecker.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                i, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
+        }
+
     }
 
+    @Override
+    protected void onStop() {
+        finishAffinity();
+        super.onStop();
+    }
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -128,5 +160,14 @@ public class MainActivity extends FlutterActivity {
 
     int getMaxCharge() {
         return sharedpreferences.getInt("MaxCharge", 0);
+    }
+    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
