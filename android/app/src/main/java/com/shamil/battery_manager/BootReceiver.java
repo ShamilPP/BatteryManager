@@ -14,6 +14,9 @@ import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (!isMyServiceRunning(context, MyService.class)) {
+            ContextCompat.startForegroundService(context, new Intent(context, MyService.class));
+        }
         int second = 2;
 
         Intent i = new Intent(context, ServiceChecker.class);

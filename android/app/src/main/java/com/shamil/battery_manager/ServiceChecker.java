@@ -1,6 +1,5 @@
 package com.shamil.battery_manager;
 
-import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,8 +8,8 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.content.ContextCompat;
-import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
 
+import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
 
 public class ServiceChecker extends BroadcastReceiver {
 

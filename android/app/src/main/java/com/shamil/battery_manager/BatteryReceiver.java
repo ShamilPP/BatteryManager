@@ -7,6 +7,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 
+import androidx.core.content.ContextCompat;
+
+import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
+
 public class BatteryReceiver extends BroadcastReceiver {
 
     public static void CheckAndRing(Context context) {
@@ -31,6 +35,9 @@ public class BatteryReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (!isMyServiceRunning(context, MyService.class)) {
+            ContextCompat.startForegroundService(context, new Intent(context, MyService.class));
+        }
         CheckAndRing(context);
     }
 
