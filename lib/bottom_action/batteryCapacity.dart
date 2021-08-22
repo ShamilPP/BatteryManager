@@ -36,15 +36,15 @@ class _ChangeMaxBatteryState extends State<ChangeMaxBattery>
               maxLines: 1,
               style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   color: Color(Provider.of<MyProvider>(context, listen: false)
                       .fontColor)),
             ),
             Text(
               Provider.of<MyProvider>(context, listen: false).batteryMAH,
               style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
                   color: Color(Provider.of<MyProvider>(context, listen: false)
                       .fontColor)),
             ),

@@ -47,7 +47,7 @@ public class MainActivity extends FlutterActivity {
         editor = sharedpreferences.edit();
         if (!sharedpreferences.contains("MaxCharge")) {
             editor.putInt("MaxCharge", 95);
-            editor.putString("MusicPath", "Default");
+            editor.putString("MusicPath", "Default ( Ring toon )");
             editor.apply();
         }
 
@@ -61,12 +61,6 @@ public class MainActivity extends FlutterActivity {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
         }
 
-    }
-
-    @Override
-    protected void onStop() {
-        finishAffinity();
-        super.onStop();
     }
 
     @Override

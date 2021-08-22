@@ -1,6 +1,8 @@
 import 'package:battery_manager/page/changeAlarmTime.dart';
 import 'package:battery_manager/provider/myProvider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ListSettings extends StatefulWidget {
@@ -12,6 +14,8 @@ class ListSettings extends StatefulWidget {
 
 class _ListSettingsState extends State<ListSettings>
     with SingleTickerProviderStateMixin {
+  static const platform = const MethodChannel('battery');
+
   late AnimationController controller;
   late Animation<Offset> offset;
   bool rightORLeft = true;
@@ -47,7 +51,7 @@ class _ListSettingsState extends State<ListSettings>
 
     return Scaffold(
       backgroundColor:
-          Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
+      Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
       appBar: AppBar(
           backgroundColor: Color(
               Provider.of<MyProvider>(context, listen: false).primaryColor),
@@ -101,11 +105,9 @@ class _ListSettingsState extends State<ListSettings>
                 ),
                 onTap: () {
                   if (index == 0) {
-                    Provider.of<MyProvider>(context, listen: false)
-                        .changeMaxBattery(context);
+                    changeMaxBattery();
                   } else if (index == 1) {
-                    Provider.of<MyProvider>(context, listen: false)
-                        .pickAndSet(context);
+                    pickAndSet();
                   } else if (index == 2) {
                     Provider.of<MyProvider>(context, listen: false)
                         .selectColorType(context);
@@ -145,5 +147,139 @@ class _ListSettingsState extends State<ListSettings>
             ),
           );
         });
+  }
+
+  void setMax(String text) async {
+    int charge = int.parse(text);
+    await platform.invokeMethod("setMax", {"charge": charge});
+  }
+
+  // Change Music
+
+  void pickAndSet() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
+
+    if (result != null) {
+      String path = result.files.single.path.toString();
+      Provider.of<MyProvider>(context, listen: false).setMusic(path);
+      await platform.invokeMethod("setMusic", {"path": path});
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  // Change max battery
+  changeMaxBattery() {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        TextEditingController controller = new TextEditingController();
+        return AlertDialog(
+          backgroundColor:
+              Color(Provider.of<MyProvider>(context).backgroundColor),
+          title: Text(
+            'Set max charge',
+            style: TextStyle(
+                color: Color(Provider.of<MyProvider>(context).fontColor)),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 2,
+                            color: Color(
+                                Provider.of<MyProvider>(context).primaryColor)),
+                        borderRadius: BorderRadius.circular(30)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 2,
+                            color: Color(
+                                Provider.of<MyProvider>(context).primaryColor)),
+                        borderRadius: BorderRadius.circular(30)),
+                    hintText: "Enter your max charge",
+                    hintStyle: TextStyle(
+                        fontSize: 17,
+                        color: Color(
+                            Provider.of<MyProvider>(context).primaryColor)),
+                  ),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(Provider.of<MyProvider>(context).fontColor)),
+                )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                    color:
+                        Color(Provider.of<MyProvider>(context).primaryColor)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              color: Color(Provider.of<MyProvider>(context).primaryColor),
+              onPressed: () {
+                try {
+                  if (controller.text != "") {
+                    int charge = int.parse(controller.text);
+                    if (charge <= 100) {
+                      if (charge > 2) {
+                        setMax(controller.text);
+                        Navigator.pop(context);
+                        Provider.of<MyProvider>(context,listen: false).setMaxCharge(charge);
+                      } else {
+                        Provider.of<MyProvider>(context,listen: false).dialog(
+                            context, "Wrong", "This is not supported", "OK",
+                            () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        });
+                      }
+                    } else {
+                      Provider.of<MyProvider>(context,listen: false).dialog(
+                          context, "Wrong", "This is not supported", "OK", () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      });
+                    }
+                  } else {
+                    Provider.of<MyProvider>(context,listen: false).dialog(
+                        context, "Wrong", "This is not supported", "OK", () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    });
+                  }
+                } on Exception {
+                  Provider.of<MyProvider>(context,listen: false).dialog(
+                      context, "Wrong", "This is not supported", "OK", () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  });
+                }
+              },
+              child: Text(
+                'Set',
+                style: TextStyle(
+                    color: Color(Provider.of<MyProvider>(context).fontColor)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

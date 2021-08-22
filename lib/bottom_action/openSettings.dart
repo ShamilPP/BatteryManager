@@ -27,7 +27,8 @@ class _OpenSettingsState extends State<OpenSettings>
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<MyProvider>(context, listen: false).music != "Default") {
+    if (Provider.of<MyProvider>(context, listen: false).music !=
+        "Default ( Ring toon )") {
       String fileNameWithExt =
           Provider.of<MyProvider>(context, listen: false).music.split('/').last;
       Provider.of<MyProvider>(context, listen: false).music =
@@ -46,8 +47,8 @@ class _OpenSettingsState extends State<OpenSettings>
                     .primaryColor))),
         child: InkWell(
           splashColor:
-              Color(Provider.of<MyProvider>(context, listen: false).fontColor),
-          onTap: () {
+          Color(Provider.of<MyProvider>(context, listen: false).fontColor),
+          onTap: () async {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ListSettings()),

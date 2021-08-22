@@ -20,7 +20,7 @@ public class App extends Application {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Battery Manager Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_DEFAULT
             );
 
             NotificationManager manager = getSystemService(NotificationManager.class);

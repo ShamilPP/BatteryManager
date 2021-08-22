@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -29,107 +28,6 @@ class MyProvider extends ChangeNotifier {
     fontColor = color;
     notifyListeners();
   }
-
-  // Change max battery
-  changeMaxBattery(BuildContext buildContext) {
-    return showDialog<void>(
-      context: buildContext,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        TextEditingController controller = new TextEditingController();
-        return AlertDialog(
-          backgroundColor: Color(backgroundColor),
-          title: Text(
-            'Set max charge',
-            style: TextStyle(color: Color(fontColor)),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(primaryColor)),
-                        borderRadius: BorderRadius.circular(30)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(primaryColor)),
-                        borderRadius: BorderRadius.circular(30)),
-                    hintText: "Enter your max charge",
-                    hintStyle:
-                        TextStyle(fontSize: 17, color: Color(primaryColor)),
-                  ),
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(fontColor)),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Color(primaryColor)),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            MaterialButton(
-              color: Color(primaryColor),
-              onPressed: () {
-                try {
-                  if (controller.text != "") {
-                    int charge = int.parse(controller.text);
-                    if (charge <= 100) {
-                      if (charge > 2) {
-                        setMax(controller.text);
-                        Navigator.pop(context);
-                        maxCharge = charge;
-                        notifyListeners();
-                      } else {
-                        dialog(context, "Wrong", "This is not supported", "OK",
-                            () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        });
-                      }
-                    } else {
-                      dialog(context, "Wrong", "This is not supported", "OK",
-                          () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      });
-                    }
-                  } else {
-                    dialog(context, "Wrong", "This is not supported", "OK", () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    });
-                  }
-                } on Exception {
-                  dialog(context, "Wrong", "This is not supported", "OK", () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  });
-                }
-              },
-              child: Text(
-                'Set',
-                style: TextStyle(color: Color(fontColor)),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   dialog(BuildContext buildContext, String title, String subTitle,
       String buttonText, void Function() clicked) {
     return showDialog<void>(
@@ -166,37 +64,13 @@ class MyProvider extends ChangeNotifier {
     );
   }
 
-  void setMax(String text) async {
-    int charge = int.parse(text);
-    await platform.invokeMethod("setMax", {"charge": charge});
-  }
-
-  // Change Music
-
-  void pickAndSet(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
-    );
-
-    if (result != null) {
-      String path = result.files.single.path.toString();
-      music = path;
-      notifyListeners();
-      await platform.invokeMethod("setMusic", {"path": path});
-    } else {
-      // User canceled the picker
-    }
-  }
-
   // Change Theme
-
   void changeColor(String provider, Color changedColor) {
     if (provider == "Primary") {
       setPrimaryColor(changedColor.value);
     } else if (provider == "Background") {
       setBackgroundColor(changedColor.value);
-    }
-    if (provider == "Font") {
+    } else if (provider == "Font") {
       setFontColor(changedColor.value);
     }
     notifyListeners();
@@ -285,5 +159,15 @@ class MyProvider extends ChangeNotifier {
         );
       },
     );
+  }
+
+  setMaxCharge(int charge) {
+    maxCharge = charge;
+    notifyListeners();
+  }
+
+  void setMusic(String path) {
+    music=path;
+    notifyListeners();
   }
 }
