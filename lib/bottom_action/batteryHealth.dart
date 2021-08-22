@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MusicChange extends StatefulWidget {
-  const MusicChange({Key? key}) : super(key: key);
+
 
   @override
   _MusicChangeState createState() => _MusicChangeState();
@@ -11,8 +11,8 @@ class MusicChange extends StatefulWidget {
 
 class _MusicChangeState extends State<MusicChange>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<Offset> offset;
+   AnimationController controller;
+   Animation<Offset> offset;
 
   @override
   void initState() {

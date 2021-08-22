@@ -69,10 +69,10 @@ class _MainScreenState extends State<MainScreen>
 
   getAllBatteryInfo() async {
     int batteryLevel;
-    int? max;
-    String? path;
-    String? batteryMAH;
-    String? batteryHealth;
+    int max;
+    String path;
+    String batteryMAH;
+    String batteryHealth;
 
     try {
       batteryLevel = await platform.invokeMethod('getBatteryLevel');
@@ -86,11 +86,11 @@ class _MainScreenState extends State<MainScreen>
 
     setState(() {
       batteryCharge = batteryLevel;
-      Provider.of<MyProvider>(context, listen: false).maxCharge = max!;
-      Provider.of<MyProvider>(context, listen: false).music = path!;
-      Provider.of<MyProvider>(context, listen: false).batteryMAH = batteryMAH!;
+      Provider.of<MyProvider>(context, listen: false).maxCharge = max;
+      Provider.of<MyProvider>(context, listen: false).music = path;
+      Provider.of<MyProvider>(context, listen: false).batteryMAH = batteryMAH;
       Provider.of<MyProvider>(context, listen: false).batteryHealth =
-          batteryHealth!;
+          batteryHealth;
     });
   }
 }

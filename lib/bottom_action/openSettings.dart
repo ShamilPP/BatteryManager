@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class OpenSettings extends StatefulWidget {
-  const OpenSettings({Key? key}) : super(key: key);
+
+
 
   @override
   _OpenSettingsState createState() => _OpenSettingsState();
@@ -12,8 +13,8 @@ class OpenSettings extends StatefulWidget {
 
 class _OpenSettingsState extends State<OpenSettings>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<Offset> offset;
+   AnimationController controller;
+   Animation<Offset> offset;
 
   @override
   void initState() {

@@ -38,16 +38,16 @@ class MyApp extends StatelessWidget {
     } else {
       Provider.of<MyProvider>(context, listen: false).primaryColor =
           Provider.of<MyProvider>(context, listen: false)
-              .sharedPreferences!
-              .getInt("Primary")!;
+              .sharedPreferences
+              .getInt("Primary");
       Provider.of<MyProvider>(context, listen: false).backgroundColor =
           Provider.of<MyProvider>(context, listen: false)
-              .sharedPreferences!
-              .getInt("Background")!;
+              .sharedPreferences
+              .getInt("Background");
       Provider.of<MyProvider>(context, listen: false).fontColor =
           Provider.of<MyProvider>(context, listen: false)
-              .sharedPreferences!
-              .getInt("Font")!;
+              .sharedPreferences
+              .getInt("Font");
     }
   }
 }

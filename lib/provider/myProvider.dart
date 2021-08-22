@@ -12,7 +12,7 @@ class MyProvider extends ChangeNotifier {
   String music = "music";
   String batteryMAH = "10 mAh";
   String batteryHealth = "GOOD";
-  SharedPreferences? sharedPreferences;
+  SharedPreferences sharedPreferences;
 
   void setPrimaryColor(int color) {
     primaryColor = color;
@@ -98,12 +98,12 @@ class MyProvider extends ChangeNotifier {
             ElevatedButton(
                 onPressed: () {
                   if (provider == "Primary") {
-                    sharedPreferences!.setInt(provider, primaryColor);
+                    sharedPreferences.setInt(provider, primaryColor);
                   } else if (provider == "Background") {
-                    sharedPreferences!.setInt(provider, backgroundColor);
+                    sharedPreferences.setInt(provider, backgroundColor);
                   }
                   if (provider == "Font") {
-                    sharedPreferences!.setInt(provider, fontColor);
+                    sharedPreferences.setInt(provider, fontColor);
                   }
                   Navigator.pop(context);
                 },

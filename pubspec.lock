@@ -107,6 +107,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  goodone_widgets:
+    dependency: "direct main"
+    description:
+      path: "C:\\Users\\User\\AndroidStudioProjects\\goodone_widgets"
+      relative: false
+    source: path
+    version: "0.0.1"
   js:
     dependency: transitive
     description:

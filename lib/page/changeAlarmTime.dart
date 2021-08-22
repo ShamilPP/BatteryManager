@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChangeAlarmTime extends StatefulWidget {
-  const ChangeAlarmTime({Key? key}) : super(key: key);
+
 
   @override
   _ChangeAlarmTimeState createState() => _ChangeAlarmTimeState();
@@ -12,7 +12,7 @@ class ChangeAlarmTime extends StatefulWidget {
 enum CustomAlarm { unlimited, custom }
 
 class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
-  CustomAlarm? customAlarm = CustomAlarm.unlimited;
+  CustomAlarm customAlarm = CustomAlarm.unlimited;
   bool vis = false;
   TextEditingController customController = new TextEditingController();
 
@@ -38,7 +38,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
                   Provider.of<MyProvider>(context, listen: false).primaryColor),
               value: CustomAlarm.unlimited,
               groupValue: customAlarm,
-              onChanged: (CustomAlarm? value) {
+              onChanged: (CustomAlarm value) {
                 setState(() {
                   customAlarm = value;
                   vis = false;
@@ -71,7 +71,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
                   Provider.of<MyProvider>(context, listen: false).primaryColor),
               value: CustomAlarm.custom,
               groupValue: customAlarm,
-              onChanged: (CustomAlarm? value) {
+              onChanged: (CustomAlarm value) {
                 setState(() {
                   customAlarm = value;
                   vis = true;

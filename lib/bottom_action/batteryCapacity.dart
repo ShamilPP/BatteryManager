@@ -9,8 +9,8 @@ class ChangeMaxBattery extends StatefulWidget {
 
 class _ChangeMaxBatteryState extends State<ChangeMaxBattery>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<Offset> offset;
+   AnimationController controller;
+   Animation<Offset> offset;
 
   @override
   void initState() {

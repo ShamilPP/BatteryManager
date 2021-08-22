@@ -14,8 +14,8 @@ class BatteryProgress extends StatefulWidget {
 
 class _BatteryProgressState extends State<BatteryProgress>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<Offset> offset;
+   AnimationController controller;
+   Animation<Offset> offset;
 
   @override
   void initState() {
@@ -33,9 +33,9 @@ class _BatteryProgressState extends State<BatteryProgress>
       tween: Tween(begin: 0.0, end: widget.batteryCharge / 100),
       duration: Duration(seconds: 5),
       builder: (context, value, child) {
-        double? progress = double.tryParse(value.toString());
-        double percentageWithDouble = progress! * 100;
-        int? percentage = percentageWithDouble.toInt();
+        double progress = double.tryParse(value.toString());
+        double percentageWithDouble = progress * 100;
+        int percentage = percentageWithDouble.toInt();
         return SlideTransition(
             position: offset,
             child: Container(
