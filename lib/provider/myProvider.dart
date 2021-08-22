@@ -28,6 +28,7 @@ class MyProvider extends ChangeNotifier {
     fontColor = color;
     notifyListeners();
   }
+
   dialog(BuildContext buildContext, String title, String subTitle,
       String buttonText, void Function() clicked) {
     return showDialog<void>(
@@ -167,7 +168,7 @@ class MyProvider extends ChangeNotifier {
   }
 
   void setMusic(String path) {
-    music=path;
+    music = path;
     notifyListeners();
   }
 }

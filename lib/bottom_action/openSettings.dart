@@ -1,31 +1,15 @@
 import 'package:battery_manager/page/settings.dart';
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:goodone_widgets/SlideInWidget.dart';
 import 'package:provider/provider.dart';
 
 class OpenSettings extends StatefulWidget {
-
-
-
   @override
   _OpenSettingsState createState() => _OpenSettingsState();
 }
 
-class _OpenSettingsState extends State<OpenSettings>
-    with SingleTickerProviderStateMixin {
-   AnimationController controller;
-   Animation<Offset> offset;
-
-  @override
-  void initState() {
-    controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    offset = Tween<Offset>(begin: Offset(0.0, -4.0), end: Offset.zero)
-        .animate(controller);
-    controller.forward();
-    super.initState();
-  }
-
+class _OpenSettingsState extends State<OpenSettings> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<MyProvider>(context, listen: false).music !=
@@ -35,8 +19,9 @@ class _OpenSettingsState extends State<OpenSettings>
       Provider.of<MyProvider>(context, listen: false).music =
           fileNameWithExt.split('.').first;
     }
-    return SlideTransition(
-      position: offset,
+    return SlideInWidget(
+      delay: 1000,
+      duration: 1000,
       child: Container(
         width: 100,
         height: 120,
@@ -48,7 +33,7 @@ class _OpenSettingsState extends State<OpenSettings>
                     .primaryColor))),
         child: InkWell(
           splashColor:
-          Color(Provider.of<MyProvider>(context, listen: false).fontColor),
+              Color(Provider.of<MyProvider>(context, listen: false).fontColor),
           onTap: () async {
             Navigator.push(
               context,

@@ -38,7 +38,7 @@ class _ListSettingsState extends State<ListSettings>
 
     return Scaffold(
       backgroundColor:
-      Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
+          Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
       appBar: AppBar(
           backgroundColor: Color(
               Provider.of<MyProvider>(context, listen: false).primaryColor),
@@ -59,27 +59,29 @@ class _ListSettingsState extends State<ListSettings>
           },
           itemBuilder: (BuildContext context, int index) {
             return SlideInWidget(
-              delay: 100,
+              delay: index * 200,
+              duration: 500,
               child: ListTile(
                 title: Text(
                   settingsOption[index],
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: Color(Provider.of<MyProvider>(context, listen: false)
-                          .fontColor)),
+                      color: Color(
+                          Provider.of<MyProvider>(context, listen: false)
+                              .fontColor)),
                 ),
                 subtitle: Text(
                   settingsSubOption[index],
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Color(
-                            Provider.of<MyProvider>(context, listen: false)
-                                .fontColor)),
-                  ),
-                  onTap: () {
-                    if (index == 0) {
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Color(
+                          Provider.of<MyProvider>(context, listen: false)
+                              .fontColor)),
+                ),
+                onTap: () {
+                  if (index == 0) {
                     changeMaxBattery();
                   } else if (index == 1) {
                     pickAndSet();
@@ -215,9 +217,10 @@ class _ListSettingsState extends State<ListSettings>
                       if (charge > 2) {
                         setMax(controller.text);
                         Navigator.pop(context);
-                        Provider.of<MyProvider>(context,listen: false).setMaxCharge(charge);
+                        Provider.of<MyProvider>(context, listen: false)
+                            .setMaxCharge(charge);
                       } else {
-                        Provider.of<MyProvider>(context,listen: false).dialog(
+                        Provider.of<MyProvider>(context, listen: false).dialog(
                             context, "Wrong", "This is not supported", "OK",
                             () {
                           Navigator.pop(context);
@@ -225,21 +228,21 @@ class _ListSettingsState extends State<ListSettings>
                         });
                       }
                     } else {
-                      Provider.of<MyProvider>(context,listen: false).dialog(
+                      Provider.of<MyProvider>(context, listen: false).dialog(
                           context, "Wrong", "This is not supported", "OK", () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       });
                     }
                   } else {
-                    Provider.of<MyProvider>(context,listen: false).dialog(
+                    Provider.of<MyProvider>(context, listen: false).dialog(
                         context, "Wrong", "This is not supported", "OK", () {
                       Navigator.pop(context);
                       Navigator.pop(context);
                     });
                   }
                 } on Exception {
-                  Provider.of<MyProvider>(context,listen: false).dialog(
+                  Provider.of<MyProvider>(context, listen: false).dialog(
                       context, "Wrong", "This is not supported", "OK", () {
                     Navigator.pop(context);
                     Navigator.pop(context);

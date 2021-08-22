@@ -1,5 +1,6 @@
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:goodone_widgets/goodone_widgets.dart';
 import 'package:provider/provider.dart';
 
 class ChangeMaxBattery extends StatefulWidget {
@@ -7,25 +8,12 @@ class ChangeMaxBattery extends StatefulWidget {
   _ChangeMaxBatteryState createState() => _ChangeMaxBatteryState();
 }
 
-class _ChangeMaxBatteryState extends State<ChangeMaxBattery>
-    with SingleTickerProviderStateMixin {
-   AnimationController controller;
-   Animation<Offset> offset;
-
-  @override
-  void initState() {
-    controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    offset = Tween<Offset>(begin: Offset(4.0, 0.0), end: Offset.zero)
-        .animate(controller);
-    controller.forward();
-    super.initState();
-  }
-
+class _ChangeMaxBatteryState extends State<ChangeMaxBattery> {
   @override
   Widget build(BuildContext context) {
-    return SlideTransition(
-      position: offset,
+    return SlideInWidget(
+      delay: 500,
+      duration: 1000,
       child: Container(
         height: 120,
         child: Column(

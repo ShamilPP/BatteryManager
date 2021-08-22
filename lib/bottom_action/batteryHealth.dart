@@ -1,33 +1,19 @@
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:goodone_widgets/SlideInWidget.dart';
 import 'package:provider/provider.dart';
 
 class MusicChange extends StatefulWidget {
-
-
   @override
   _MusicChangeState createState() => _MusicChangeState();
 }
 
-class _MusicChangeState extends State<MusicChange>
-    with SingleTickerProviderStateMixin {
-   AnimationController controller;
-   Animation<Offset> offset;
-
-  @override
-  void initState() {
-    controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    offset = Tween<Offset>(begin: Offset(-4.0, 0.0), end: Offset.zero)
-        .animate(controller);
-    controller.forward();
-    super.initState();
-  }
-
+class _MusicChangeState extends State<MusicChange> {
   @override
   Widget build(BuildContext context) {
-    return SlideTransition(
-      position: offset,
+    return SlideInWidget(
+      delay: 1500,
+      duration: 1000,
       child: Container(
         height: 120,
         child: Column(
