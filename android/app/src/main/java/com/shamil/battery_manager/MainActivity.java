@@ -49,6 +49,11 @@ public class MainActivity extends FlutterActivity {
             editor.putInt("MaxCharge", 95);
             editor.putString("MusicPath", "Default ( Ring toon )");
             editor.apply();
+        }else{
+            if(sharedpreferences.getString("MusicPath", null).equals("Default")){
+                editor.putString("MusicPath", "Default ( Ring toon )");
+                editor.apply();
+            }
         }
 
         int second = 2;

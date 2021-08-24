@@ -5,6 +5,7 @@ import 'package:battery_manager/bottom_action/openSettings.dart';
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   void initState() {
     super.initState();
+    checkPermission();
     getAllBatteryInfo();
   }
 
@@ -92,5 +94,11 @@ class _MainScreenState extends State<MainScreen>
       Provider.of<MyProvider>(context, listen: false).batteryHealth =
           batteryHealth;
     });
+  }
+
+  Future<void> checkPermission() async {
+    if (await Permission.storage.isDenied) {
+      Permission.storage.request();
+    }
   }
 }

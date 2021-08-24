@@ -19,7 +19,7 @@ public class Charged {
             audioManager.setStreamVolume(STREAM_MUSIC, 15, AudioManager.FLAG_PLAY_SOUND);
             MediaPlayer mediaPlayer = MainActivity.mediaPlayer;
             if (!mediaPlayer.isPlaying()) {
-                if (music.equals("Default")) {
+                if (music.equals("Default ( Ring toon )")) {
                     Uri ringtone = RingtoneManager.getActualDefaultRingtoneUri(context.getApplicationContext(), RingtoneManager.TYPE_RINGTONE);
                     mediaPlayer.setDataSource(context, ringtone);
                 } else {

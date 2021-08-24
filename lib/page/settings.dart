@@ -1,4 +1,5 @@
 import 'package:battery_manager/page/changeAlarmTime.dart';
+import 'package:battery_manager/page/checkForUpdate.dart';
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _ListSettingsState extends State<ListSettings>
       "Music",
       "Theme",
       "Alarm time",
+      "Check for Update",
       "About"
     ];
     List<String> settingsSubOption = [
@@ -33,6 +35,7 @@ class _ListSettingsState extends State<ListSettings>
       music,
       "Custom Theme",
       "Alarm time",
+      "Update to latest version",
       "Developer : Shamil"
     ];
 
@@ -90,6 +93,8 @@ class _ListSettingsState extends State<ListSettings>
                         .selectColorType(context);
                   } else if (index == 3) {
                     changeAlarmTime(context);
+                  } else if(index ==4 ){
+                    Navigator.push(context, MaterialPageRoute(builder: (builder)=>CheckForUpdate()));
                   }
                 },
               ),
@@ -140,7 +145,8 @@ class _ListSettingsState extends State<ListSettings>
 
     if (result != null) {
       String path = result.files.single.path.toString();
-      Provider.of<MyProvider>(context, listen: false).setMusic(path);
+      String fileNameWithExt =  path.split('/').last;
+      Provider.of<MyProvider>(context, listen: false).setMusic(fileNameWithExt.split('.').first);
       await platform.invokeMethod("setMusic", {"path": path});
     } else {
       // User canceled the picker

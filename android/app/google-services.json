@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "450138394228",
+    "project_id": "batterymanager-397c2",
+    "storage_bucket": "batterymanager-397c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450138394228:android:8c29c37079a594c428cb21",
+        "android_client_info": {
+          "package_name": "com.shamil.battery_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "450138394228-5orjcnha7966pucm66481tln9h1ip9ic.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCynaRRsLhncQdSHNjpWFYdNu_Nx9ASj9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "450138394228-5orjcnha7966pucm66481tln9h1ip9ic.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
