@@ -72,8 +72,7 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
                   onClick: () {
                     if (updateAvailable) {
                       _downloadUpdate(
-                        "https://github.com/ShamilPP/BatteryManager/releases/download/2.2.2/BatteryManager.apk",
-                      );
+                          updateLink);
                       setState(() {
                         progressVisible = true;
                       });
