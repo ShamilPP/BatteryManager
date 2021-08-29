@@ -14,9 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -49,8 +46,8 @@ public class MainActivity extends FlutterActivity {
             editor.putInt("MaxCharge", 95);
             editor.putString("MusicPath", "Default ( Ring toon )");
             editor.apply();
-        }else{
-            if(sharedpreferences.getString("MusicPath", null).equals("Default")){
+        }else {
+            if (sharedpreferences.getString("MusicPath", null).equals("Default")) {
                 editor.putString("MusicPath", "Default ( Ring toon )");
                 editor.apply();
             }

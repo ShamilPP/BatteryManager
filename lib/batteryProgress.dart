@@ -25,7 +25,7 @@ class _BatteryProgressState extends State<BatteryProgress> {
         int percentage = percentageWithDouble.toInt();
         return SlideInWidget(
           delay: 500,
-          duration: 4000,
+          duration: 2000,
           child: Container(
             width: MediaQuery.of(context).size.width - 100,
             height: MediaQuery.of(context).size.width - 100,

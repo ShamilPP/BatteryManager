@@ -1,5 +1,7 @@
 package com.shamil.battery_manager;
 
+import static android.content.Context.AUDIO_SERVICE;
+
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -9,14 +11,12 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import static android.content.Context.AUDIO_SERVICE;
-import static android.media.AudioManager.STREAM_MUSIC;
 public class Charged {
 
     public static void fullCharged(Context context, String music) {
         try {
             AudioManager audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
-            audioManager.setStreamVolume(STREAM_MUSIC, 15, AudioManager.FLAG_PLAY_SOUND);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
             MediaPlayer mediaPlayer = MainActivity.mediaPlayer;
             if (!mediaPlayer.isPlaying()) {
                 if (music.equals("Default ( Ring toon )")) {

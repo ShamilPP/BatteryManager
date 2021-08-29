@@ -34,7 +34,7 @@ class _ListSettingsState extends State<ListSettings>
       maxCharge.toString(),
       music,
       "Custom Theme",
-      "Alarm time",
+      "Unlimited",
       "Update to latest version",
       "Developer : Shamil"
     ];
