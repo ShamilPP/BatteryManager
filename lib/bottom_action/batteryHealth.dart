@@ -12,7 +12,7 @@ class _MusicChangeState extends State<MusicChange> {
   @override
   Widget build(BuildContext context) {
     return SlideInWidget(
-      delay: 1500,
+      delay: 1000,
       duration: 1000,
       child: Container(
         height: 120,

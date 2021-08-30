@@ -1,7 +1,7 @@
 import 'package:battery_manager/batteryProgress.dart';
 import 'package:battery_manager/bottom_action/batteryCapacity.dart';
 import 'package:battery_manager/bottom_action/batteryHealth.dart';
-import 'package:battery_manager/bottom_action/openSettings.dart';
+import 'package:battery_manager/page/settings.dart';
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,14 +31,28 @@ class _MainScreenState extends State<MainScreen>
       backgroundColor:
           Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
       appBar: AppBar(
-          backgroundColor: Color(
-              Provider.of<MyProvider>(context, listen: false).primaryColor),
-          title: Text(
-            "Battery manager",
-            style: TextStyle(
-                color: Color(
-                    Provider.of<MyProvider>(context, listen: false).fontColor)),
-          )),
+        backgroundColor:
+            Color(Provider.of<MyProvider>(context, listen: false).primaryColor),
+        title: Text(
+          "Battery manager",
+          style: TextStyle(
+              color: Color(Provider.of<MyProvider>(context, listen: false)
+                  .backgroundColor)),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              color: Color(Provider.of<MyProvider>(context, listen: false)
+                  .backgroundColor),
+            ),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            ),
+          ),
+        ],
+      ),
       body: Container(
         child: Stack(
           children: [
@@ -57,7 +71,7 @@ class _MainScreenState extends State<MainScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ChangeMaxBattery(),
-                    OpenSettings(),
+                    // OpenSettings(),
                     MusicChange(),
                   ],
                 ),
@@ -75,6 +89,7 @@ class _MainScreenState extends State<MainScreen>
     String path;
     String batteryMAH;
     String batteryHealth;
+    String temperature;
 
     try {
       batteryLevel = await platform.invokeMethod('getBatteryLevel');
@@ -82,6 +97,7 @@ class _MainScreenState extends State<MainScreen>
       path = await platform.invokeMethod('getMusic');
       batteryMAH = await platform.invokeMethod('getMAH');
       batteryHealth = await platform.invokeMethod('getHealth');
+      temperature = await platform.invokeMethod('getTemperature');
     } on PlatformException {
       batteryLevel = 100;
     }
@@ -93,6 +109,7 @@ class _MainScreenState extends State<MainScreen>
       Provider.of<MyProvider>(context, listen: false).batteryMAH = batteryMAH;
       Provider.of<MyProvider>(context, listen: false).batteryHealth =
           batteryHealth;
+      Provider.of<MyProvider>(context, listen: false).temperature = temperature;
     });
   }
 

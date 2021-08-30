@@ -13,6 +13,7 @@ class MyProvider extends ChangeNotifier {
   String batteryMAH = "10 mAh";
   String batteryHealth = "GOOD";
   SharedPreferences sharedPreferences;
+  String temperature = "0 °C";
 
   void setPrimaryColor(int color) {
     primaryColor = color;

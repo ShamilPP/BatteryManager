@@ -7,6 +7,7 @@ import 'package:goodone_widgets/helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
 import 'package:package_info/package_info.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CheckForUpdate extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    checkInstallPermission();
     if (downloadProgress != null) {
       var percentage = downloadProgress * 100;
       checkResultText = percentage.toInt().toString() + " %";
@@ -139,5 +141,11 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
       await file.writeAsBytes(bytes);
       OpenFile.open(file.path);
     });
+  }
+
+  void checkInstallPermission() async {
+    if (await Permission.requestInstallPackages.isDenied) {
+      Permission.requestInstallPackages.request();
+    }
   }
 }

@@ -7,18 +7,25 @@ import 'package:flutter/services.dart';
 import 'package:goodone_widgets/goodone_widgets.dart';
 import 'package:provider/provider.dart';
 
-class ListSettings extends StatefulWidget {
-  const ListSettings({Key key}) : super(key: key);
-
+class Settings extends StatefulWidget {
   @override
-  _ListSettingsState createState() => _ListSettingsState();
+  _SettingsState createState() => _SettingsState();
 }
 
-class _ListSettingsState extends State<ListSettings>
+class _SettingsState extends State<Settings>
     with SingleTickerProviderStateMixin {
   static const platform = const MethodChannel('battery');
+
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<MyProvider>(context, listen: false).music !=
+        "Default ( Ring toon )") {
+      String fileNameWithExt =
+          Provider.of<MyProvider>(context, listen: false).music.split('/').last;
+      Provider.of<MyProvider>(context, listen: false).music =
+          fileNameWithExt.split('.').first;
+    }
+
     int maxCharge = Provider.of<MyProvider>(context, listen: false).maxCharge;
     String music = Provider.of<MyProvider>(context, listen: false).music;
 
@@ -41,15 +48,15 @@ class _ListSettingsState extends State<ListSettings>
 
     return Scaffold(
       backgroundColor:
-          Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
+      Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
       appBar: AppBar(
           backgroundColor: Color(
               Provider.of<MyProvider>(context, listen: false).primaryColor),
           title: Text(
             "Settings",
             style: TextStyle(
-                color: Color(
-                    Provider.of<MyProvider>(context, listen: false).fontColor)),
+                color: Color(Provider.of<MyProvider>(context, listen: false)
+                    .backgroundColor)),
           )),
       body: Container(
         child: ListView.separated(
@@ -145,8 +152,7 @@ class _ListSettingsState extends State<ListSettings>
 
     if (result != null) {
       String path = result.files.single.path.toString();
-      String fileNameWithExt =  path.split('/').last;
-      Provider.of<MyProvider>(context, listen: false).setMusic(fileNameWithExt.split('.').first);
+      Provider.of<MyProvider>(context, listen: false).setMusic(path);
       await platform.invokeMethod("setMusic", {"path": path});
     } else {
       // User canceled the picker

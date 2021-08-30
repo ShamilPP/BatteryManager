@@ -1,6 +1,7 @@
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:goodone_widgets/SlideInWidget.dart';
+import 'package:goodone_widgets/helper.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -38,15 +39,42 @@ class _BatteryProgressState extends State<BatteryProgress> {
               borderColor: Color(Provider.of<MyProvider>(context).fontColor),
               borderWidth: 5.0,
               direction: Axis.vertical,
-              center: Text(
-                "$percentage %",
-                style: TextStyle(
-                  fontSize: 50,
-                  fontFamily: "Font",
-                  letterSpacing: 5,
-                  color: Color(Provider.of<MyProvider>(context, listen: false)
-                      .fontColor),
-                ),
+              center: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "$percentage %",
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontFamily: "Font",
+                      letterSpacing: 5,
+                      color: Color(Provider.of<MyProvider>(context, listen: false)
+                          .fontColor),
+                    ),
+                  ),
+                  verticalSpace(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+
+                    children: [
+                      Icon(
+                        Icons.thermostat_outlined,
+                        size: 35,
+                        color: Color(Provider.of<MyProvider>(context, listen: false)
+                            .fontColor),
+                      ), Text(
+                        Provider.of<MyProvider>(context, listen: false)
+                            .temperature,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(Provider.of<MyProvider>(context, listen: false)
+                              .fontColor),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                ],
               ),
             ),
           ),

@@ -24,6 +24,7 @@ public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "battery";
     public static SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
+    Intent actionBatteryChangedIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +47,15 @@ public class MainActivity extends FlutterActivity {
             editor.putInt("MaxCharge", 95);
             editor.putString("MusicPath", "Default ( Ring toon )");
             editor.apply();
-        }else {
+        } else {
             if (sharedpreferences.getString("MusicPath", null).equals("Default")) {
                 editor.putString("MusicPath", "Default ( Ring toon )");
                 editor.apply();
             }
         }
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        actionBatteryChangedIntent = registerReceiver(null, intentFilter);
 
         int second = 2;
 
@@ -61,8 +65,9 @@ public class MainActivity extends FlutterActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
         }
-
     }
 
     @Override
@@ -86,16 +91,24 @@ public class MainActivity extends FlutterActivity {
                                 result.success(getMaxCharge());
                             } else if (call.method.equals("setMax")) {
                                 setMaxCharge(call.argument("charge"));
+                            } else if (call.method.equals("getTemperature")) {
+                                result.success(getTemperature());
                             }
                         }
                 );
     }
 
-    String getBatteryHealth() {
+    String getTemperature() {
+        try {
+            float temp = ((float) actionBatteryChangedIntent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10);
+            return temp + " °C";
+        } catch (Exception e) {
+            return "0 °C";
+        }
+    }
 
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent intent = registerReceiver(null, intentFilter);
-        int deviceHealth = intent.getIntExtra(BatteryManager.EXTRA_HEALTH, 0);
+    String getBatteryHealth() {
+        int deviceHealth = actionBatteryChangedIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, 0);
 
         if (deviceHealth == BatteryManager.BATTERY_HEALTH_COLD) {
             return "Cold";
@@ -118,18 +131,15 @@ public class MainActivity extends FlutterActivity {
     }
 
     String getBatteryMAH() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            BatteryManager mBatteryManager = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
-            int chargeCounter = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-            int capacity = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        BatteryManager mBatteryManager = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
+        int chargeCounter = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+        int capacity = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-            if (chargeCounter == Integer.MIN_VALUE || capacity == Integer.MIN_VALUE) {
-                return "Getting Problem";
-            } else {
-                return (chargeCounter / capacity / 10) + " mAh";
-            }
+        if (chargeCounter == Integer.MIN_VALUE || capacity == Integer.MIN_VALUE) {
+            return "Getting Problem";
+        } else {
+            return (chargeCounter / capacity / 10) + " mAh";
         }
-        return "Getting Problem";
     }
 
     private int getBatteryLevel() {
