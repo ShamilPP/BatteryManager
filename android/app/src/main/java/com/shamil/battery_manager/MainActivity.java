@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.Settings;
 
@@ -79,8 +80,8 @@ public class MainActivity extends FlutterActivity {
                             if (call.method.equals("getBatteryLevel")) {
                                 int batteryLevel = getBatteryLevel();
                                 result.success(batteryLevel);
-                            } else if (call.method.equals("getMAH")) {
-                                result.success(getBatteryMAH());
+                            } else if (call.method.equals("getCapacity")) {
+                                result.success(getBatteryCapacity() + " mAh");
                             } else if (call.method.equals("getHealth")) {
                                 result.success(getBatteryHealth());
                             } else if (call.method.equals("getMusic")) {
@@ -93,6 +94,8 @@ public class MainActivity extends FlutterActivity {
                                 setMaxCharge(call.argument("charge"));
                             } else if (call.method.equals("getTemperature")) {
                                 result.success(getTemperature());
+                            } else if (call.method.equals("getDownloadPath")) {
+                                result.success(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
                             }
                         }
                 );
@@ -103,43 +106,59 @@ public class MainActivity extends FlutterActivity {
             float temp = ((float) actionBatteryChangedIntent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10);
             return temp + " °C";
         } catch (Exception e) {
-            return "0 °C";
+            return "Getting Problem";
         }
     }
 
     String getBatteryHealth() {
-        int deviceHealth = actionBatteryChangedIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, 0);
+        int currentCapacity = getBatteryCapacity();
+        int maxCapacity = getBatteryMaxCapacity();
+        int percentage = currentCapacity / maxCapacity * 100;
 
-        if (deviceHealth == BatteryManager.BATTERY_HEALTH_COLD) {
-            return "Cold";
-        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_DEAD) {
-            return "Dead";
-        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_GOOD) {
-            return "Good";
-        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
-            return "OverHeat";
-        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE) {
-            return "Over voltage";
-        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_UNKNOWN) {
-            return "Unknown";
-        } else if (deviceHealth == BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE) {
-            return "Unspecified Failure";
+        if (100 < percentage) {
+            if (190 < percentage) {
+                percentage = 10;
+            } else {
+                percentage = 200 - percentage;
+            }
+        } else if (10 > percentage) {
+            percentage = 10;
         }
-        return "Getting Problem";
 
-
+        return percentage + " %";
     }
 
-    String getBatteryMAH() {
+    int getBatteryCapacity() {
         BatteryManager mBatteryManager = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
         int chargeCounter = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
         int capacity = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-
-        if (chargeCounter == Integer.MIN_VALUE || capacity == Integer.MIN_VALUE) {
-            return "Getting Problem";
+        if (chargeCounter == 0 || capacity == 0) {
+            return getBatteryMaxCapacity();
         } else {
-            return (chargeCounter / capacity / 10) + " mAh";
+            return (chargeCounter / capacity / 10);
         }
+    }
+
+    int getBatteryMaxCapacity() {
+        Object mPowerProfile;
+        double batteryCapacity = 0;
+        final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
+
+        try {
+            mPowerProfile = Class.forName(POWER_PROFILE_CLASS)
+                    .getConstructor(Context.class)
+                    .newInstance(this);
+
+            batteryCapacity = (double) Class
+                    .forName(POWER_PROFILE_CLASS)
+                    .getMethod("getBatteryCapacity")
+                    .invoke(mPowerProfile);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int batteryMAH = (int) batteryCapacity;
+        return batteryMAH;
     }
 
     private int getBatteryLevel() {

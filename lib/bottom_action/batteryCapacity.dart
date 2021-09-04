@@ -29,7 +29,7 @@ class _ChangeMaxBatteryState extends State<ChangeMaxBattery> {
                       .fontColor)),
             ),
             Text(
-              Provider.of<MyProvider>(context, listen: false).batteryMAH,
+              Provider.of<MyProvider>(context, listen: false).batteryCapacity,
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,

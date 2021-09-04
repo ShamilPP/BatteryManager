@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:goodone_widgets/goodone_widgets.dart';
 import 'package:goodone_widgets/helper.dart';
 import 'package:http/http.dart' as http;
@@ -21,10 +22,10 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
   String updateLink = "No Update";
   double downloadProgress;
   String checkResultText = "";
+  static const platform = const  MethodChannel('battery');
 
   @override
   Widget build(BuildContext context) {
-    checkInstallPermission();
     if (downloadProgress != null) {
       var percentage = downloadProgress * 100;
       checkResultText = percentage.toInt().toString() + " %";
@@ -72,9 +73,9 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
                       forecolor: Colors.white),
                   centerAlign: true,
                   onClick: () {
+                    checkInstallPermission();
                     if (updateAvailable) {
-                      _downloadUpdate(
-                          updateLink);
+                      downloadUpdate(updateLink);
                       setState(() {
                         progressVisible = true;
                       });
@@ -121,7 +122,7 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
     });
   }
 
-  _downloadUpdate(String url) async {
+  downloadUpdate(String url) async {
     int total = 0, received = 0;
     http.StreamedResponse response;
     final List<int> bytes = [];
@@ -136,10 +137,8 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
           downloadProgress = received / total;
         });
       }
-    }).onDone(() async {
-      final file = File('/storage/emulated/0/Download/Battery Manager.apk');
-      await file.writeAsBytes(bytes);
-      OpenFile.open(file.path);
+    }).onDone(() {
+      installUpdate(bytes);
     });
   }
 
@@ -147,5 +146,13 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
     if (await Permission.requestInstallPackages.isDenied) {
       Permission.requestInstallPackages.request();
     }
+  }
+
+  installUpdate(List<int> bytes) async {
+    final file = File(await platform.invokeMethod('getDownloadPath') +
+        '/Battery Manager.apk');
+    file.writeAsBytes(bytes).then((value) {
+      OpenFile.open(file.path);
+    });
   }
 }

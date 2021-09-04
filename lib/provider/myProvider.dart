@@ -10,7 +10,7 @@ class MyProvider extends ChangeNotifier {
   int fontColor = Colors.black.value;
   int maxCharge = 0;
   String music = "music";
-  String batteryMAH = "10 mAh";
+  String batteryCapacity = "10 mAh";
   String batteryHealth = "GOOD";
   SharedPreferences sharedPreferences;
   String temperature = "0 °C";

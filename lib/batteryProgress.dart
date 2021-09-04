@@ -58,10 +58,9 @@ class _BatteryProgressState extends State<BatteryProgress> {
 
                     children: [
                       Icon(
-                        Icons.thermostat_outlined,
-                        size: 35,
-                        color: Color(Provider.of<MyProvider>(context, listen: false)
-                            .fontColor),
+                        Icons.thermostat,
+                        size: 50,
+                        color: Colors.red,
                       ), Text(
                         Provider.of<MyProvider>(context, listen: false)
                             .temperature,

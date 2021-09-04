@@ -87,7 +87,7 @@ class _MainScreenState extends State<MainScreen>
     int batteryLevel;
     int max;
     String path;
-    String batteryMAH;
+    String batteryCapacity;
     String batteryHealth;
     String temperature;
 
@@ -95,7 +95,7 @@ class _MainScreenState extends State<MainScreen>
       batteryLevel = await platform.invokeMethod('getBatteryLevel');
       max = await platform.invokeMethod('getMax');
       path = await platform.invokeMethod('getMusic');
-      batteryMAH = await platform.invokeMethod('getMAH');
+      batteryCapacity = await platform.invokeMethod('getCapacity');
       batteryHealth = await platform.invokeMethod('getHealth');
       temperature = await platform.invokeMethod('getTemperature');
     } on PlatformException {
@@ -106,7 +106,7 @@ class _MainScreenState extends State<MainScreen>
       batteryCharge = batteryLevel;
       Provider.of<MyProvider>(context, listen: false).maxCharge = max;
       Provider.of<MyProvider>(context, listen: false).music = path;
-      Provider.of<MyProvider>(context, listen: false).batteryMAH = batteryMAH;
+      Provider.of<MyProvider>(context, listen: false).batteryCapacity = batteryCapacity;
       Provider.of<MyProvider>(context, listen: false).batteryHealth =
           batteryHealth;
       Provider.of<MyProvider>(context, listen: false).temperature = temperature;
