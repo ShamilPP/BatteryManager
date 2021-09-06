@@ -4,7 +4,9 @@ import 'package:battery_manager/provider/myProvider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:goodone_widgets/goodone_widgets.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
@@ -28,6 +30,12 @@ class _SettingsState extends State<Settings>
 
     int maxCharge = Provider.of<MyProvider>(context, listen: false).maxCharge;
     String music = Provider.of<MyProvider>(context, listen: false).music;
+    String time = Provider.of<MyProvider>(context, listen: false).time;
+    if(time!="Unlimited"){
+    int millisecond = int.parse(time);
+    int minutes = millisecond ~/ 60000;
+    time = minutes.toString() + " Minute";
+    }
 
     List<String> settingsOption = [
       "Max Charge",
@@ -41,7 +49,7 @@ class _SettingsState extends State<Settings>
       maxCharge.toString(),
       music,
       "Custom Theme",
-      "Unlimited",
+      time,
       "Update to latest version",
       "Developer : Shamil"
     ];
@@ -100,8 +108,22 @@ class _SettingsState extends State<Settings>
                         .selectColorType(context);
                   } else if (index == 3) {
                     changeAlarmTime(context);
-                  } else if(index ==4 ){
-                    Navigator.push(context, MaterialPageRoute(builder: (builder)=>CheckForUpdate()));
+                  } else if (index == 4) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => CheckForUpdate()));
+                  } else if (index == 5) {
+                    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+                      String version = packageInfo.version;
+
+                      Fluttertoast.showToast(
+                          msg: "App version : " + version,
+                          toastLength: Toast.LENGTH_SHORT,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    });
                   }
                 },
               ),

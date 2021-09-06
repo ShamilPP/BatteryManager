@@ -1,5 +1,6 @@
 import 'package:battery_manager/provider/myProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ChangeAlarmTime extends StatefulWidget {
@@ -11,8 +12,23 @@ enum CustomAlarm { unlimited, custom }
 
 class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
   CustomAlarm customAlarm = CustomAlarm.unlimited;
-  bool vis = false;
-  TextEditingController customController = new TextEditingController();
+  bool customVisibility = false;
+  TextEditingController timeTextController = new TextEditingController();
+  String time = "Unlimited";
+  static const platform = const MethodChannel('battery');
+
+  @override
+  void initState() {
+    time = Provider.of<MyProvider>(context, listen: false).time;
+    if (time != "Unlimited") {
+      customAlarm = CustomAlarm.custom;
+      customVisibility = true;
+      int millisecond = int.parse(time);
+      int minutes = (millisecond ~/ 60000);
+      timeTextController.text = minutes.toString();
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +54,9 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
               groupValue: customAlarm,
               onChanged: (CustomAlarm value) {
                 setState(() {
-                  customAlarm = value;
-                  vis = false;
+                  customAlarm = CustomAlarm.unlimited;
+                  customVisibility = false;
+                  print("un");
                 });
               },
             ),
@@ -47,7 +64,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
           onTap: () {
             setState(() {
               customAlarm = CustomAlarm.unlimited;
-              vis = false;
+              customVisibility = false;
             });
           },
         ),
@@ -71,8 +88,9 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
               groupValue: customAlarm,
               onChanged: (CustomAlarm value) {
                 setState(() {
-                  customAlarm = value;
-                  vis = true;
+                  customAlarm = CustomAlarm.custom;
+                  customVisibility = true;
+                  print("no");
                 });
               },
             ),
@@ -80,22 +98,24 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
           onTap: () {
             setState(() {
               customAlarm = CustomAlarm.custom;
-              vis = true;
+              customVisibility = true;
             });
           },
         ),
         Visibility(
-          visible: vis,
+          visible: customVisibility,
           child: Container(
             width: 150,
             child: TextField(
               style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
                 color: Color(
                     Provider.of<MyProvider>(context, listen: false).fontColor),
               ),
               cursorColor: Color(
                   Provider.of<MyProvider>(context, listen: false).fontColor),
-              controller: customController,
+              controller: timeTextController,
               decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -111,7 +131,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
                     color: Color(Provider.of<MyProvider>(context, listen: false)
                         .fontColor),
                   ),
-                  hintText: "Second"),
+                  hintText: "Minute"),
               keyboardType: TextInputType.number,
             ),
           ),
@@ -122,27 +142,33 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
             color: Color(
                 Provider.of<MyProvider>(context, listen: false).primaryColor),
             onPressed: () {
-              if (customController.text != "") {
-                int second = int.parse(customController.text);
-                if (second > 100 || second < 1) {
+              if (customAlarm == CustomAlarm.unlimited) {
+                Navigator.pop(context);
+                Provider.of<MyProvider>(context, listen: false)
+                    .setTime("Unlimited");
+                platform.invokeMethod("setTime", {"time": "Unlimited"});
+              } else {
+                if (timeTextController.text != "") {
+                  int minutes;
+                  try {
+                    minutes = int.parse(timeTextController.text);
+                  } catch (e) {
+                    minutes = 0;
+                  }
+                  if (minutes > 7 || minutes < 1) {
+                    Provider.of<MyProvider>(context, listen: false).dialog(
+                        context, "Error", "This is not supported", "OK", () {
+                      Navigator.pop(context);
+                    });
+                  } else {
+                    setTime();
+                  }
+                } else {
                   Provider.of<MyProvider>(context, listen: false).dialog(
                       context, "Error", "This is not supported", "OK", () {
                     Navigator.pop(context);
                   });
-                } else {
-                  Provider.of<MyProvider>(context, listen: false).dialog(
-                      context,
-                      "Coming soon !",
-                      "Next update will coming soon",
-                      'Wait', () {
-                    Navigator.pop(context);
-                  });
                 }
-              } else {
-                Provider.of<MyProvider>(context, listen: false).dialog(
-                    context, "Error", "This is not supported", "OK", () {
-                  Navigator.pop(context);
-                });
               }
             },
             child: Text(
@@ -156,5 +182,14 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
         )
       ],
     );
+  }
+
+  void setTime() async {
+    Navigator.pop(context);
+    int minutes = int.parse(timeTextController.text);
+    int millisecond = minutes * 60000;
+    Provider.of<MyProvider>(context, listen: false)
+        .setTime(millisecond.toString());
+    platform.invokeMethod("setTime", {"time": millisecond.toString()});
   }
 }

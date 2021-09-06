@@ -10,8 +10,9 @@ class MyProvider extends ChangeNotifier {
   int fontColor = Colors.black.value;
   int maxCharge = 0;
   String music = "music";
+  String time = "Unlimited";
   String batteryCapacity = "10 mAh";
-  String batteryHealth = "GOOD";
+  String batteryHealth = "10 %";
   SharedPreferences sharedPreferences;
   String temperature = "0 °C";
 
@@ -172,4 +173,10 @@ class MyProvider extends ChangeNotifier {
     music = path;
     notifyListeners();
   }
+
+  void setTime(String minute) {
+    time = minute;
+    notifyListeners();
+  }
+
 }

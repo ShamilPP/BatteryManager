@@ -44,6 +44,7 @@ public class MainActivity extends FlutterActivity {
 
         sharedpreferences = getSharedPreferences("Battery", Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
+
         if (!sharedpreferences.contains("MaxCharge")) {
             editor.putInt("MaxCharge", 95);
             editor.putString("MusicPath", "Default ( Ring toon )");
@@ -53,6 +54,11 @@ public class MainActivity extends FlutterActivity {
                 editor.putString("MusicPath", "Default ( Ring toon )");
                 editor.apply();
             }
+        }
+        
+        if(!sharedpreferences.contains("Time")){
+            editor.putString("Time", "Unlimited");
+            editor.apply();
         }
 
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -92,6 +98,10 @@ public class MainActivity extends FlutterActivity {
                                 result.success(getMaxCharge());
                             } else if (call.method.equals("setMax")) {
                                 setMaxCharge(call.argument("charge"));
+                            } else if (call.method.equals("getTime")) {
+                                result.success(getTime());
+                            } else if (call.method.equals("setTime")) {
+                                setTime(call.argument("time"));
                             } else if (call.method.equals("getTemperature")) {
                                 result.success(getTemperature());
                             } else if (call.method.equals("getDownloadPath")) {
@@ -113,7 +123,8 @@ public class MainActivity extends FlutterActivity {
     String getBatteryHealth() {
         int currentCapacity = getBatteryCapacity();
         int maxCapacity = getBatteryMaxCapacity();
-        int percentage = currentCapacity / maxCapacity * 100;
+        double batteryHealth = ((double) currentCapacity / maxCapacity) * 100;
+        int percentage = (int) batteryHealth;
 
         if (100 < percentage) {
             if (190 < percentage) {
@@ -124,7 +135,6 @@ public class MainActivity extends FlutterActivity {
         } else if (10 > percentage) {
             percentage = 10;
         }
-
         return percentage + " %";
     }
 
@@ -176,6 +186,15 @@ public class MainActivity extends FlutterActivity {
 
     String getMusicPath() {
         return sharedpreferences.getString("MusicPath", null);
+    }
+    
+    void setTime(String time) {
+        editor.putString("Time", time);
+        editor.apply();
+    }
+
+    String getTime() {
+        return sharedpreferences.getString("Time", null);
     }
 
     void setMaxCharge(int charge) {
