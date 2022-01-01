@@ -15,66 +15,30 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
+    public static WindowManager windowManager;
+    public static LayoutInflater layoutInflater;
+    public static View view;
     public static MediaPlayer mediaPlayer = new MediaPlayer();
     private static final String CHANNEL = "battery";
     public static SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     Intent actionBatteryChangedIntent;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Intent intent = new Intent();
-        String packageName = getPackageName();
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
-                startActivity(intent);
-            }
-        }
-
-        sharedpreferences = getSharedPreferences("Battery", Context.MODE_PRIVATE);
-        editor = sharedpreferences.edit();
-
-        if (!sharedpreferences.contains("MaxCharge")) {
-            editor.putInt("MaxCharge", 95);
-            editor.putString("MusicPath", "Default ( Ring toon )");
-            editor.apply();
-        } else {
-            if (sharedpreferences.getString("MusicPath", null).equals("Default")) {
-                editor.putString("MusicPath", "Default ( Ring toon )");
-                editor.apply();
-            }
-        }
-        
-        if(!sharedpreferences.contains("Time")){
-            editor.putString("Time", "Unlimited");
-            editor.apply();
-        }
-
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        actionBatteryChangedIntent = registerReceiver(null, intentFilter);
-
-        int second = 2;
-
-        Intent i = new Intent(this, ServiceChecker.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                i, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
-        }
+    public static void turnScreenOn(Context context) {
+        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+                PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                PowerManager.ON_AFTER_RELEASE, "appname::WakeLock");
+        wakeLock.acquire();
     }
 
     @Override
@@ -109,6 +73,59 @@ public class MainActivity extends FlutterActivity {
                             }
                         }
                 );
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent();
+        String packageName = getPackageName();
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                startActivity(intent);
+            }
+        }
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        layoutInflater = LayoutInflater.from(getApplicationContext());
+        view = MainActivity.layoutInflater.inflate(R.layout.layout, null);
+
+        sharedpreferences = getSharedPreferences("Battery", Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
+
+        if (!sharedpreferences.contains("MaxCharge")) {
+            editor.putInt("MaxCharge", 95);
+            editor.putString("MusicPath", "Default ( Ring toon )");
+            editor.apply();
+        } else {
+            if (sharedpreferences.getString("MusicPath", null).equals("Default")) {
+                editor.putString("MusicPath", "Default ( Ring toon )");
+                editor.apply();
+            }
+        }
+
+        if (!sharedpreferences.contains("Time")) {
+            editor.putString("Time", "Unlimited");
+            editor.apply();
+        }
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        actionBatteryChangedIntent = registerReceiver(null, intentFilter);
+
+        int second = 2;
+
+        Intent i = new Intent(this, ServiceChecker.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                i, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + second * 1000, pendingIntent);
+        }
     }
 
     String getTemperature() {
@@ -187,7 +204,7 @@ public class MainActivity extends FlutterActivity {
     String getMusicPath() {
         return sharedpreferences.getString("MusicPath", null);
     }
-    
+
     void setTime(String time) {
         editor.putString("Time", time);
         editor.apply();

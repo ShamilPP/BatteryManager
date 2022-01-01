@@ -1,5 +1,7 @@
 package com.shamil.battery_manager;
 
+import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +11,6 @@ import android.os.BatteryManager;
 
 import androidx.core.content.ContextCompat;
 
-import static com.shamil.battery_manager.MainActivity.isMyServiceRunning;
 
 public class BatteryReceiver extends BroadcastReceiver {
 

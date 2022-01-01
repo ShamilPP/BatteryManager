@@ -117,7 +117,10 @@ class _MainScreenState extends State<MainScreen>
 
   Future<void> checkPermission() async {
     if (await Permission.storage.isDenied) {
-      Permission.storage.request();
+      await Permission.storage.request();
+    }
+    if (await Permission.systemAlertWindow.isDenied) {
+     await Permission.systemAlertWindow.request();
     }
   }
 }
