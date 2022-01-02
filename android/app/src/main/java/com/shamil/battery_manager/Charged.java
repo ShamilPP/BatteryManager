@@ -11,7 +11,9 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -33,7 +35,11 @@ public class Charged {
                 } else {
                     mediaPlayer.setDataSource(context, Uri.parse(music));
                 }
-                showRingScreen(context);
+                try {
+                    showRingScreen(context);
+                } catch (Exception e) {
+                    Log.d("tag", e.toString());
+                }
                 mediaPlayer.prepare();
                 mediaPlayer.start();
                 mediaPlayer.setLooping(true);
@@ -80,12 +86,19 @@ public class Charged {
     public static void showRingScreen(Context context) {
         MainActivity.turnScreenOn(context);
 
+        int overlay;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            overlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            overlay = WindowManager.LayoutParams.TYPE_PHONE;
+        }
+
         WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT, 0, 0,
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                overlay,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
                 PixelFormat.RGBA_8888);
         MainActivity.windowManager.addView(view, mLayoutParams);
     }
