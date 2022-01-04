@@ -47,29 +47,41 @@ public class MainActivity extends FlutterActivity {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
-                            if (call.method.equals("getBatteryLevel")) {
-                                int batteryLevel = getBatteryLevel();
-                                result.success(batteryLevel);
-                            } else if (call.method.equals("getCapacity")) {
-                                result.success(getBatteryCapacity() + " mAh");
-                            } else if (call.method.equals("getHealth")) {
-                                result.success(getBatteryHealth());
-                            } else if (call.method.equals("getMusic")) {
-                                result.success(getMusicPath());
-                            } else if (call.method.equals("setMusic")) {
-                                setMusic(call.argument("path"));
-                            } else if (call.method.equals("getMax")) {
-                                result.success(getMaxCharge());
-                            } else if (call.method.equals("setMax")) {
-                                setMaxCharge(call.argument("charge"));
-                            } else if (call.method.equals("getTime")) {
-                                result.success(getTime());
-                            } else if (call.method.equals("setTime")) {
-                                setTime(call.argument("time"));
-                            } else if (call.method.equals("getTemperature")) {
-                                result.success(getTemperature());
-                            } else if (call.method.equals("getDownloadPath")) {
-                                result.success(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                            switch (call.method) {
+                                case "getBatteryLevel":
+                                    int batteryLevel = getBatteryLevel();
+                                    result.success(batteryLevel);
+                                    break;
+                                case "getCapacity":
+                                    result.success(getBatteryCapacity() + " mAh");
+                                    break;
+                                case "getHealth":
+                                    result.success(getBatteryHealth());
+                                    break;
+                                case "getMusic":
+                                    result.success(getMusicPath());
+                                    break;
+                                case "setMusic":
+                                    setMusic(call.argument("path"));
+                                    break;
+                                case "getMax":
+                                    result.success(getMaxCharge());
+                                    break;
+                                case "setMax":
+                                    setMaxCharge(call.argument("charge"));
+                                    break;
+                                case "getTime":
+                                    result.success(getTime());
+                                    break;
+                                case "setTime":
+                                    setTime(call.argument("time"));
+                                    break;
+                                case "getTemperature":
+                                    result.success(getTemperature());
+                                    break;
+                                case "getDownloadPath":
+                                    result.success(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                                    break;
                             }
                         }
                 );
@@ -89,6 +101,7 @@ public class MainActivity extends FlutterActivity {
                 startActivity(intent);
             }
         }
+
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         layoutInflater = LayoutInflater.from(getApplicationContext());
         view = MainActivity.layoutInflater.inflate(R.layout.layout, null);

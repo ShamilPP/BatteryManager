@@ -13,7 +13,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -37,8 +36,8 @@ public class Charged {
                 }
                 try {
                     showRingScreen(context);
-                } catch (Exception e) {
-                    Log.d("tag", e.toString());
+                } catch (Exception ignored) {
+
                 }
                 mediaPlayer.prepare();
                 mediaPlayer.start();
@@ -71,7 +70,6 @@ public class Charged {
 
 
     public static void stopAlert() {
-
         if (windowManager != null) {
             if (view.isShown()) {
                 windowManager.removeView(view);
@@ -85,15 +83,12 @@ public class Charged {
 
     public static void showRingScreen(Context context) {
         MainActivity.turnScreenOn(context);
-
         int overlay;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             overlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
             overlay = WindowManager.LayoutParams.TYPE_PHONE;
         }
-
         WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
