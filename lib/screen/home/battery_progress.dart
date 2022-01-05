@@ -1,4 +1,4 @@
-import 'package:battery_manager/provider/myProvider.dart';
+import 'package:battery_manager/provider/battery_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:goodone_widgets/SlideInWidget.dart';
 import 'package:goodone_widgets/helper.dart';
@@ -32,11 +32,9 @@ class _BatteryProgressState extends State<BatteryProgress> {
             height: MediaQuery.of(context).size.width - 100,
             child: LiquidCircularProgressIndicator(
               value: progress,
-              valueColor: AlwaysStoppedAnimation(
-                  Color(Provider.of<MyProvider>(context).primaryColor)),
-              backgroundColor:
-                  Color(Provider.of<MyProvider>(context).backgroundColor),
-              borderColor: Color(Provider.of<MyProvider>(context).fontColor),
+              valueColor: AlwaysStoppedAnimation(Colors.yellow),
+              backgroundColor: Colors.white,
+              borderColor: Colors.black,
               borderWidth: 5.0,
               direction: Axis.vertical,
               center: Column(
@@ -45,11 +43,10 @@ class _BatteryProgressState extends State<BatteryProgress> {
                   Text(
                     "$percentage %",
                     style: TextStyle(
-                      fontSize: 50,
+                      fontSize: 60,
                       fontFamily: "Font",
                       letterSpacing: 5,
-                      color: Color(Provider.of<MyProvider>(context, listen: false)
-                          .fontColor),
+                      color: Colors.black,
                     ),
                   ),
                   verticalSpace(height: 20),
@@ -62,12 +59,11 @@ class _BatteryProgressState extends State<BatteryProgress> {
                         size: 50,
                         color: Colors.red,
                       ), Text(
-                        Provider.of<MyProvider>(context, listen: false)
+                        Provider.of<BatteryProvider>(context, listen: false)
                             .temperature,
                         style: TextStyle(
                           fontSize: 20,
-                          color: Color(Provider.of<MyProvider>(context, listen: false)
-                              .fontColor),
+                          color: Colors.black,
                         ),
                       ),
                     ],

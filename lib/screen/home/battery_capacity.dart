@@ -1,4 +1,4 @@
-import 'package:battery_manager/provider/myProvider.dart';
+import 'package:battery_manager/provider/battery_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:goodone_widgets/goodone_widgets.dart';
 import 'package:provider/provider.dart';
@@ -25,16 +25,14 @@ class _ChangeMaxBatteryState extends State<ChangeMaxBattery> {
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(Provider.of<MyProvider>(context, listen: false)
-                      .fontColor)),
+                  color: Colors.black),
             ),
             Text(
-              Provider.of<MyProvider>(context, listen: false).batteryCapacity,
+              Provider.of<BatteryProvider>(context, listen: false).batteryCapacity,
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: Color(Provider.of<MyProvider>(context, listen: false)
-                      .fontColor)),
+                  color: Colors.black),
             ),
           ],
         ),

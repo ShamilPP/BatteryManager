@@ -1,16 +1,17 @@
-import 'package:battery_manager/provider/myProvider.dart';
+import 'package:battery_manager/provider/battery_provider.dart';
+import 'package:battery_manager/public/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class ChangeAlarmTime extends StatefulWidget {
+class AlarmTime extends StatefulWidget {
   @override
-  _ChangeAlarmTimeState createState() => _ChangeAlarmTimeState();
+  _AlarmTimeState createState() => _AlarmTimeState();
 }
 
 enum CustomAlarm { unlimited, custom }
 
-class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
+class _AlarmTimeState extends State<AlarmTime> {
   CustomAlarm customAlarm = CustomAlarm.unlimited;
   bool customVisibility = false;
   TextEditingController timeTextController = new TextEditingController();
@@ -19,7 +20,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
 
   @override
   void initState() {
-    time = Provider.of<MyProvider>(context, listen: false).time;
+    time = Provider.of<BatteryProvider>(context, listen: false).time;
     if (time != "Unlimited") {
       customAlarm = CustomAlarm.custom;
       customVisibility = true;
@@ -38,18 +39,15 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
           title: Text(
             'Unlimited',
             style: TextStyle(
-              color: Color(
-                  Provider.of<MyProvider>(context, listen: false).fontColor),
+              color: Colors.black,
             ),
           ),
           leading: Theme(
             data: ThemeData(
-              unselectedWidgetColor: Color(
-                  Provider.of<MyProvider>(context, listen: false).primaryColor),
+              unselectedWidgetColor: Colors.green,
             ),
             child: Radio<CustomAlarm>(
-              activeColor: Color(
-                  Provider.of<MyProvider>(context, listen: false).primaryColor),
+              activeColor: Colors.green,
               value: CustomAlarm.unlimited,
               groupValue: customAlarm,
               onChanged: (CustomAlarm value) {
@@ -72,18 +70,15 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
           title: Text(
             "Custom",
             style: TextStyle(
-              color: Color(
-                  Provider.of<MyProvider>(context, listen: false).fontColor),
+              color: Colors.black,
             ),
           ),
           leading: Theme(
             data: ThemeData(
-              unselectedWidgetColor: Color(
-                  Provider.of<MyProvider>(context, listen: false).primaryColor),
+              unselectedWidgetColor: Colors.green,
             ),
             child: Radio<CustomAlarm>(
-              activeColor: Color(
-                  Provider.of<MyProvider>(context, listen: false).primaryColor),
+              activeColor: Colors.green,
               value: CustomAlarm.custom,
               groupValue: customAlarm,
               onChanged: (CustomAlarm value) {
@@ -110,26 +105,19 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(
-                    Provider.of<MyProvider>(context, listen: false).fontColor),
+                color: Colors.black,
               ),
-              cursorColor: Color(
-                  Provider.of<MyProvider>(context, listen: false).fontColor),
+              cursorColor: Colors.black,
               controller: timeTextController,
               decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                    color: Color(Provider.of<MyProvider>(context, listen: false)
-                        .primaryColor),
+                    color: Colors.green,
                   )),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Color(
-                              Provider.of<MyProvider>(context, listen: false)
-                                  .primaryColor))),
+                      borderSide: BorderSide(color: Colors.green)),
                   hintStyle: TextStyle(
-                    color: Color(Provider.of<MyProvider>(context, listen: false)
-                        .fontColor),
+                    color: Colors.black,
                   ),
                   hintText: "Minute"),
               keyboardType: TextInputType.number,
@@ -139,12 +127,11 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
         Container(
           alignment: Alignment.bottomRight,
           child: MaterialButton(
-            color: Color(
-                Provider.of<MyProvider>(context, listen: false).primaryColor),
+            color: Colors.green,
             onPressed: () {
               if (customAlarm == CustomAlarm.unlimited) {
                 Navigator.pop(context);
-                Provider.of<MyProvider>(context, listen: false)
+                Provider.of<BatteryProvider>(context, listen: false)
                     .setTime("Unlimited");
                 platform.invokeMethod("setTime", {"time": "Unlimited"});
               } else {
@@ -156,7 +143,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
                     minutes = 0;
                   }
                   if (minutes > 7 || minutes < 1) {
-                    Provider.of<MyProvider>(context, listen: false).dialog(
+                  dialog(
                         context, "Error", "This is not supported", "OK", () {
                       Navigator.pop(context);
                     });
@@ -164,7 +151,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
                     setTime();
                   }
                 } else {
-                  Provider.of<MyProvider>(context, listen: false).dialog(
+                 dialog(
                       context, "Error", "This is not supported", "OK", () {
                     Navigator.pop(context);
                   });
@@ -174,8 +161,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
             child: Text(
               "Select",
               style: TextStyle(
-                color: Color(
-                    Provider.of<MyProvider>(context, listen: false).fontColor),
+                color: Colors.black,
               ),
             ),
           ),
@@ -188,7 +174,7 @@ class _ChangeAlarmTimeState extends State<ChangeAlarmTime> {
     Navigator.pop(context);
     int minutes = int.parse(timeTextController.text);
     int millisecond = minutes * 60000;
-    Provider.of<MyProvider>(context, listen: false)
+    Provider.of<BatteryProvider>(context, listen: false)
         .setTime(millisecond.toString());
     platform.invokeMethod("setTime", {"time": millisecond.toString()});
   }

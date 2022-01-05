@@ -1,19 +1,20 @@
-import 'package:battery_manager/batteryProgress.dart';
-import 'package:battery_manager/bottom_action/batteryCapacity.dart';
-import 'package:battery_manager/bottom_action/batteryHealth.dart';
-import 'package:battery_manager/page/settings.dart';
-import 'package:battery_manager/provider/myProvider.dart';
+import 'package:battery_manager/provider/battery_provider.dart';
+import 'package:battery_manager/screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-class MainScreen extends StatefulWidget {
+import 'home/battery_capacity.dart';
+import 'home/battery_health.dart';
+import 'home/battery_progress.dart';
+
+class HomeScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
+class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   int batteryCharge = 1;
   static const platform = const MethodChannel('battery');
@@ -28,23 +29,18 @@ class _MainScreenState extends State<MainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor:
-            Color(Provider.of<MyProvider>(context, listen: false).primaryColor),
+        backgroundColor: Colors.green,
         title: Text(
           "Battery manager",
-          style: TextStyle(
-              color: Color(Provider.of<MyProvider>(context, listen: false)
-                  .backgroundColor)),
+          style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
             icon: Icon(
               Icons.settings,
-              color: Color(Provider.of<MyProvider>(context, listen: false)
-                  .backgroundColor),
+              color: Colors.white,
             ),
             onPressed: () => Navigator.push(
               context,
@@ -105,13 +101,15 @@ class _MainScreenState extends State<MainScreen>
 
     setState(() {
       batteryCharge = batteryLevel;
-      Provider.of<MyProvider>(context, listen: false).maxCharge = max;
-      Provider.of<MyProvider>(context, listen: false).music = path;
-      Provider.of<MyProvider>(context, listen: false).time = time;
-      Provider.of<MyProvider>(context, listen: false).batteryCapacity = batteryCapacity;
-      Provider.of<MyProvider>(context, listen: false).batteryHealth =
+      Provider.of<BatteryProvider>(context, listen: false).maxCharge = max;
+      Provider.of<BatteryProvider>(context, listen: false).music = path;
+      Provider.of<BatteryProvider>(context, listen: false).time = time;
+      Provider.of<BatteryProvider>(context, listen: false).batteryCapacity =
+          batteryCapacity;
+      Provider.of<BatteryProvider>(context, listen: false).batteryHealth =
           batteryHealth;
-      Provider.of<MyProvider>(context, listen: false).temperature = temperature;
+      Provider.of<BatteryProvider>(context, listen: false).temperature =
+          temperature;
     });
   }
 
@@ -120,7 +118,7 @@ class _MainScreenState extends State<MainScreen>
       await Permission.storage.request();
     }
     if (await Permission.systemAlertWindow.isDenied) {
-     await Permission.systemAlertWindow.request();
+      await Permission.systemAlertWindow.request();
     }
   }
 }

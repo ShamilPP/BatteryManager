@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.io.IOException;
+
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
@@ -111,11 +113,11 @@ public class MainActivity extends FlutterActivity {
 
         if (!sharedpreferences.contains("MaxCharge")) {
             editor.putInt("MaxCharge", 95);
-            editor.putString("MusicPath", "Default ( Ring toon )");
+            editor.putString("MusicPath", "Default ( Ring tone )");
             editor.apply();
         } else {
-            if (sharedpreferences.getString("MusicPath", null).equals("Default")) {
-                editor.putString("MusicPath", "Default ( Ring toon )");
+            if (sharedpreferences.getString("MusicPath", null).equals("Default") | sharedpreferences.getString("MusicPath", null).equals("Default ( Ring toon )")) {
+                editor.putString("MusicPath", "Default ( Ring tone )");
                 editor.apply();
             }
         }

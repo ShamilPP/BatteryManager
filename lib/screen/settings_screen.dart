@@ -1,12 +1,14 @@
-import 'package:battery_manager/page/changeAlarmTime.dart';
-import 'package:battery_manager/page/checkForUpdate.dart';
-import 'package:battery_manager/provider/myProvider.dart';
+import 'package:battery_manager/provider/battery_provider.dart';
+import 'package:battery_manager/public/dialog.dart';
+import 'package:battery_manager/screen/settings/change_alarm_time.dart';
+import 'package:battery_manager/screen/update_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:goodone_widgets/goodone_widgets.dart';
 import 'package:package_info/package_info.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
@@ -20,27 +22,30 @@ class _SettingsState extends State<Settings>
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<MyProvider>(context, listen: false).music !=
-        "Default ( Ring toon )") {
+    if (Provider.of<BatteryProvider>(context, listen: false).music !=
+        "Default ( Ring tone )") {
       String fileNameWithExt =
-          Provider.of<MyProvider>(context, listen: false).music.split('/').last;
-      Provider.of<MyProvider>(context, listen: false).music =
+          Provider.of<BatteryProvider>(context, listen: false)
+              .music
+              .split('/')
+              .last;
+      Provider.of<BatteryProvider>(context, listen: false).music =
           fileNameWithExt.split('.').first;
     }
 
-    int maxCharge = Provider.of<MyProvider>(context, listen: false).maxCharge;
-    String music = Provider.of<MyProvider>(context, listen: false).music;
-    String time = Provider.of<MyProvider>(context, listen: false).time;
-    if(time!="Unlimited"){
-    int millisecond = int.parse(time);
-    int minutes = millisecond ~/ 60000;
-    time = minutes.toString() + " Minute";
+    int maxCharge =
+        Provider.of<BatteryProvider>(context, listen: false).maxCharge;
+    String music = Provider.of<BatteryProvider>(context, listen: false).music;
+    String time = Provider.of<BatteryProvider>(context, listen: false).time;
+    if (time != "Unlimited") {
+      int millisecond = int.parse(time);
+      int minutes = millisecond ~/ 60000;
+      time = minutes.toString() + " Minute";
     }
 
     List<String> settingsOption = [
       "Max Charge",
       "Music",
-      "Theme",
       "Alarm time",
       "Check for Update",
       "About"
@@ -48,32 +53,46 @@ class _SettingsState extends State<Settings>
     List<String> settingsSubOption = [
       maxCharge.toString(),
       music,
-      "Custom Theme",
       time,
       "Update to latest version",
       "Developer : Shamil"
     ];
 
     return Scaffold(
-      backgroundColor:
-      Color(Provider.of<MyProvider>(context, listen: true).backgroundColor),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Color(
-              Provider.of<MyProvider>(context, listen: false).primaryColor),
+          backgroundColor: Colors.green,
+          actions: [
+            TextButton.icon(
+              onPressed: () {
+                dialog(
+                    context,
+                    "Stop service",
+                    'Open the app to restart the service\n\n\nHOW TO STOP SERVICE\n---------------------------------------\n1. Click "STOP"\n2. Click "Force Stop"\n3. Click "Ok"',
+                    "STOP", () {
+                  openAppSettings();
+                });
+              },
+              icon: Icon(
+                Icons.stop,
+                color: Colors.red,
+                size: 30,
+              ),
+              label: Text(
+                "STOP",
+                style: TextStyle(color: Colors.red),
+              ),
+            )
+          ],
           title: Text(
             "Settings",
-            style: TextStyle(
-                color: Color(Provider.of<MyProvider>(context, listen: false)
-                    .backgroundColor)),
+            style: TextStyle(color: Colors.white),
           )),
       body: Container(
         child: ListView.separated(
           itemCount: settingsOption.length,
           separatorBuilder: (BuildContext context, int index) {
-            return Divider(
-                thickness: 1,
-                color: Color(Provider.of<MyProvider>(context, listen: false)
-                    .primaryColor));
+            return Divider(thickness: 1, color: Colors.green);
           },
           itemBuilder: (BuildContext context, int index) {
             return SlideInWidget(
@@ -85,18 +104,14 @@ class _SettingsState extends State<Settings>
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: Color(
-                          Provider.of<MyProvider>(context, listen: false)
-                              .fontColor)),
+                      color: Colors.black),
                 ),
                 subtitle: Text(
                   settingsSubOption[index],
                   style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Color(
-                          Provider.of<MyProvider>(context, listen: false)
-                              .fontColor)),
+                      color: Colors.black),
                 ),
                 onTap: () {
                   if (index == 0) {
@@ -104,16 +119,13 @@ class _SettingsState extends State<Settings>
                   } else if (index == 1) {
                     pickAndSet();
                   } else if (index == 2) {
-                    Provider.of<MyProvider>(context, listen: false)
-                        .selectColorType(context);
-                  } else if (index == 3) {
                     changeAlarmTime(context);
-                  } else if (index == 4) {
+                  } else if (index == 3) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (builder) => CheckForUpdate()));
-                  } else if (index == 5) {
+                  } else if (index == 4) {
                     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
                       String version = packageInfo.version;
 
@@ -139,20 +151,17 @@ class _SettingsState extends State<Settings>
         context: buildContext,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Color(
-                Provider.of<MyProvider>(context, listen: false)
-                    .backgroundColor),
+            backgroundColor: Colors.white,
             title: Text(
               'Select Alarm time',
               style: TextStyle(
-                color: Color(
-                    Provider.of<MyProvider>(context, listen: false).fontColor),
+                color: Colors.black,
               ),
             ),
             content: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  ChangeAlarmTime(),
+                  AlarmTime(),
                 ],
               ),
             ),
@@ -174,7 +183,7 @@ class _SettingsState extends State<Settings>
 
     if (result != null) {
       String path = result.files.single.path.toString();
-      Provider.of<MyProvider>(context, listen: false).setMusic(path);
+      Provider.of<BatteryProvider>(context, listen: false).setMusic(path);
       await platform.invokeMethod("setMusic", {"path": path});
     } else {
       // User canceled the picker
@@ -189,12 +198,10 @@ class _SettingsState extends State<Settings>
       builder: (BuildContext context) {
         TextEditingController controller = new TextEditingController();
         return AlertDialog(
-          backgroundColor:
-              Color(Provider.of<MyProvider>(context).backgroundColor),
+          backgroundColor: Colors.white,
           title: Text(
             'Set max charge',
-            style: TextStyle(
-                color: Color(Provider.of<MyProvider>(context).fontColor)),
+            style: TextStyle(color: Colors.black),
           ),
           content: SingleChildScrollView(
             child: ListBody(
@@ -204,27 +211,18 @@ class _SettingsState extends State<Settings>
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 2,
-                            color: Color(
-                                Provider.of<MyProvider>(context).primaryColor)),
+                        borderSide: BorderSide(width: 2, color: Colors.green),
                         borderRadius: BorderRadius.circular(30)),
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 2,
-                            color: Color(
-                                Provider.of<MyProvider>(context).primaryColor)),
+                        borderSide: BorderSide(width: 2, color: Colors.green),
                         borderRadius: BorderRadius.circular(30)),
                     hintText: "Enter your max charge",
-                    hintStyle: TextStyle(
-                        fontSize: 17,
-                        color: Color(
-                            Provider.of<MyProvider>(context).primaryColor)),
+                    hintStyle: TextStyle(fontSize: 17, color: Colors.green),
                   ),
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(Provider.of<MyProvider>(context).fontColor)),
+                      color: Colors.black),
                 )
               ],
             ),
@@ -233,16 +231,14 @@ class _SettingsState extends State<Settings>
             TextButton(
               child: Text(
                 'Cancel',
-                style: TextStyle(
-                    color:
-                        Color(Provider.of<MyProvider>(context).primaryColor)),
+                style: TextStyle(color: Colors.green),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             MaterialButton(
-              color: Color(Provider.of<MyProvider>(context).primaryColor),
+              color: Colors.green,
               onPressed: () {
                 try {
                   if (controller.text != "") {
@@ -251,33 +247,30 @@ class _SettingsState extends State<Settings>
                       if (charge > 2) {
                         setMax(controller.text);
                         Navigator.pop(context);
-                        Provider.of<MyProvider>(context, listen: false)
+                        Provider.of<BatteryProvider>(context, listen: false)
                             .setMaxCharge(charge);
                       } else {
-                        Provider.of<MyProvider>(context, listen: false).dialog(
-                            context, "Wrong", "This is not supported", "OK",
+                        dialog(context, "Wrong", "This is not supported", "OK",
                             () {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         });
                       }
                     } else {
-                      Provider.of<MyProvider>(context, listen: false).dialog(
-                          context, "Wrong", "This is not supported", "OK", () {
+                      dialog(context, "Wrong", "This is not supported", "OK",
+                          () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       });
                     }
                   } else {
-                    Provider.of<MyProvider>(context, listen: false).dialog(
-                        context, "Wrong", "This is not supported", "OK", () {
+                    dialog(context, "Wrong", "This is not supported", "OK", () {
                       Navigator.pop(context);
                       Navigator.pop(context);
                     });
                   }
                 } on Exception {
-                  Provider.of<MyProvider>(context, listen: false).dialog(
-                      context, "Wrong", "This is not supported", "OK", () {
+                  dialog(context, "Wrong", "This is not supported", "OK", () {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   });
@@ -285,8 +278,7 @@ class _SettingsState extends State<Settings>
               },
               child: Text(
                 'Set',
-                style: TextStyle(
-                    color: Color(Provider.of<MyProvider>(context).fontColor)),
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
