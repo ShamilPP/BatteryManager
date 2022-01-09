@@ -2,6 +2,7 @@ package com.shamil.battery_manager;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +19,6 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-
-import java.io.IOException;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -83,6 +82,9 @@ public class MainActivity extends FlutterActivity {
                                     break;
                                 case "getDownloadPath":
                                     result.success(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                                    break;
+                                case "openDownloadFolder":
+                                    startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
                                     break;
                             }
                         }

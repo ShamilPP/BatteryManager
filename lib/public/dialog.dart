@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-dialog(BuildContext buildContext, String title, String subTitle,
+dialog(BuildContext buildContext, String title, Widget subTitle,
     String buttonText, void Function() clicked) {
-  return showDialog<void>(
+  showDialog(
     context: buildContext,
-    barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Colors.white,
@@ -12,19 +11,9 @@ dialog(BuildContext buildContext, String title, String subTitle,
           title,
           style: TextStyle(color: Colors.black),
         ),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text(
-                subTitle,
-                style: TextStyle(color: Colors.black),
-              )
-            ],
-          ),
-        ),
+        content: subTitle,
         actions: [
-          MaterialButton(
-              color: Colors.green,
+          ElevatedButton(
               onPressed: clicked,
               child: Text(
                 buttonText,

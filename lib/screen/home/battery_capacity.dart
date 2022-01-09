@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:goodone_widgets/goodone_widgets.dart';
 import 'package:provider/provider.dart';
 
-class ChangeMaxBattery extends StatefulWidget {
+class BatteryCapacity extends StatefulWidget {
   @override
-  _ChangeMaxBatteryState createState() => _ChangeMaxBatteryState();
+  _BatteryCapacityState createState() => _BatteryCapacityState();
 }
 
-class _ChangeMaxBatteryState extends State<ChangeMaxBattery> {
+class _BatteryCapacityState extends State<BatteryCapacity> {
   @override
   Widget build(BuildContext context) {
     return SlideInWidget(
@@ -28,7 +28,8 @@ class _ChangeMaxBatteryState extends State<ChangeMaxBattery> {
                   color: Colors.black),
             ),
             Text(
-              Provider.of<BatteryProvider>(context, listen: false).batteryCapacity,
+              Provider.of<BatteryProvider>(context, listen: false)
+                  .batteryCapacity,
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,

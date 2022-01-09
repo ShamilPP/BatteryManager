@@ -32,7 +32,7 @@ class _BatteryProgressState extends State<BatteryProgress> {
             height: MediaQuery.of(context).size.width - 100,
             child: LiquidCircularProgressIndicator(
               value: progress,
-              valueColor: AlwaysStoppedAnimation(Colors.yellow),
+              valueColor: AlwaysStoppedAnimation(Colors.deepPurpleAccent),
               backgroundColor: Colors.white,
               borderColor: Colors.black,
               borderWidth: 5.0,
@@ -52,13 +52,13 @@ class _BatteryProgressState extends State<BatteryProgress> {
                   verticalSpace(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-
                     children: [
                       Icon(
                         Icons.thermostat,
                         size: 50,
                         color: Colors.red,
-                      ), Text(
+                      ),
+                      Text(
                         Provider.of<BatteryProvider>(context, listen: false)
                             .temperature,
                         style: TextStyle(
@@ -68,7 +68,6 @@ class _BatteryProgressState extends State<BatteryProgress> {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),

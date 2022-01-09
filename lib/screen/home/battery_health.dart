@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:goodone_widgets/SlideInWidget.dart';
 import 'package:provider/provider.dart';
 
-class MusicChange extends StatefulWidget {
+class BatteryHealth extends StatefulWidget {
   @override
-  _MusicChangeState createState() => _MusicChangeState();
+  _BatteryHealthState createState() => _BatteryHealthState();
 }
 
-class _MusicChangeState extends State<MusicChange> {
+class _BatteryHealthState extends State<BatteryHealth> {
   @override
   Widget build(BuildContext context) {
     return SlideInWidget(
@@ -28,7 +28,8 @@ class _MusicChangeState extends State<MusicChange> {
                   color: Colors.black),
             ),
             Text(
-              Provider.of<BatteryProvider>(context, listen: false).batteryHealth,
+              Provider.of<BatteryProvider>(context, listen: false)
+                  .batteryHealth,
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,

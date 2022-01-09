@@ -143,16 +143,17 @@ class _AlarmTimeState extends State<AlarmTime> {
                     minutes = 0;
                   }
                   if (minutes > 7 || minutes < 1) {
-                  dialog(
-                        context, "Error", "This is not supported", "OK", () {
+                    dialog(
+                        context, "Error", Text("This is not supported"), "OK",
+                        () {
                       Navigator.pop(context);
                     });
                   } else {
                     setTime();
                   }
                 } else {
-                 dialog(
-                      context, "Error", "This is not supported", "OK", () {
+                  dialog(context, "Error", Text("This is not supported"), "OK",
+                      () {
                     Navigator.pop(context);
                   });
                 }

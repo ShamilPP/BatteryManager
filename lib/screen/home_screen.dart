@@ -29,9 +29,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.green,
         title: Text(
           "Battery manager",
           style: TextStyle(color: Colors.white),
@@ -59,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen>
               top: 50,
               child: BatteryProgress(batteryCharge),
             ),
+
+            // TODO: Advance Battery Details
             Positioned(
               bottom: MediaQuery.of(context).size.height / 13,
               child: Container(
@@ -66,8 +66,8 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ChangeMaxBattery(),
-                    MusicChange(),
+                    BatteryCapacity(),
+                    BatteryHealth(),
                   ],
                 ),
               ),
@@ -77,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
-
   getAllBatteryInfo() async {
     int batteryLevel;
     int max;

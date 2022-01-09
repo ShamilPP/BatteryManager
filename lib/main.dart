@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.green),
       title: "Battery manager",
       home: HomeScreen(),
     );
   }
-
 }

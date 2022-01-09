@@ -25,5 +25,4 @@ class BatteryProvider extends ChangeNotifier {
     time = minute;
     notifyListeners();
   }
-
 }

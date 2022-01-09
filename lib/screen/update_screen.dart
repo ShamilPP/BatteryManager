@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:battery_manager/public/dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +23,13 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
   String updateLink = "No Update";
   double downloadProgress;
   String checkResultText = "";
-  static const platform = const  MethodChannel('battery');
+  static const platform = const MethodChannel('battery');
+
+  @override
+  void initState() {
+    createFolder();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,6 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Check for Update'),
-        backgroundColor: Colors.green,
       ),
       body: Container(
         margin: EdgeInsets.all(20),
@@ -72,7 +78,7 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
                       bgColor: updateAvailable ? Colors.red : Colors.green,
                       forecolor: Colors.white),
                   centerAlign: true,
-                  onClick: () {
+                  onClick: () async {
                     checkInstallPermission();
                     if (updateAvailable) {
                       downloadUpdate(updateLink);
@@ -137,22 +143,91 @@ class _CheckForUpdateState extends State<CheckForUpdate> {
           downloadProgress = received / total;
         });
       }
-    }).onDone(() {
-      installUpdate(bytes);
+    }).onDone(() async {
+      String folderPath =
+          await platform.invokeMethod('getDownloadPath') + '/Battery Manager';
+      final file = File(folderPath + '/Battery Manager.apk');
+      installUpdate(file.path, folderPath);
     });
+  }
+
+  installUpdate(String path, String folderPath) async {
+    dialog(
+        context,
+        "Install Update",
+        Container(
+          child: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    OpenFile.open(path);
+                  },
+                  child: Text("Install"),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    dialog(
+                        context,
+                        "Advanced Install",
+                        SingleChildScrollView(
+                            child: ListBody(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                platform.invokeMethod("openDownloadFolder");
+                              },
+                              child: Text("Open File manager"),
+                            ),
+                            ListTile(
+                              title: Text("App not installed ?"),
+                              onTap: () {
+                                dialog(
+                                    context,
+                                    "HOW TO SOLVE APP NOT INSTALLED",
+                                    Text(
+                                        '1. Uninstall "Battery manager"\n2. Open Download folder \n3. Install "Battery manager"'),
+                                    "Cancel", () {
+                                  Navigator.pop(context);
+                                });
+                              },
+                            )
+                          ],
+                        )),
+                        "Cancel", () {
+                      Navigator.pop(context);
+                    });
+                  },
+                  child: Text("Advanced"),
+                )
+              ],
+            ),
+          ),
+        ),
+        "Cancel", () {
+      Navigator.pop(context);
+    });
+  }
+
+  void createFolder() async {
+    String folderPath =
+        await platform.invokeMethod('getDownloadPath') + '/Battery Manager';
+    Directory mkDir = Directory(folderPath);
+    File rmFile = File(folderPath);
+    if (await rmFile.exists()) {
+      await rmFile.delete();
+    }
+    if (!await mkDir.exists()) {
+      await mkDir.create();
+    }
   }
 
   void checkInstallPermission() async {
     if (await Permission.requestInstallPackages.isDenied) {
       Permission.requestInstallPackages.request();
     }
-  }
-
-  installUpdate(List<int> bytes) async {
-    final file = File(await platform.invokeMethod('getDownloadPath') +
-        '/Battery Manager.apk');
-    file.writeAsBytes(bytes).then((value) {
-      OpenFile.open(file.path);
-    });
+    if (await Permission.manageExternalStorage.isDenied) {
+      Permission.manageExternalStorage.request();
+    }
   }
 }

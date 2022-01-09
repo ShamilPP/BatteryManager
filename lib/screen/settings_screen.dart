@@ -33,9 +33,8 @@ class _SettingsState extends State<Settings>
           fileNameWithExt.split('.').first;
     }
 
-    int maxCharge =
-        Provider.of<BatteryProvider>(context, listen: false).maxCharge;
-    String music = Provider.of<BatteryProvider>(context, listen: false).music;
+    int maxCharge = Provider.of<BatteryProvider>(context).maxCharge;
+    String music = Provider.of<BatteryProvider>(context).music;
     String time = Provider.of<BatteryProvider>(context, listen: false).time;
     if (time != "Unlimited") {
       int millisecond = int.parse(time);
@@ -61,14 +60,14 @@ class _SettingsState extends State<Settings>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.green,
           actions: [
             TextButton.icon(
               onPressed: () {
                 dialog(
                     context,
                     "Stop service",
-                    'Open the app to restart the service\n\n\nHOW TO STOP SERVICE\n---------------------------------------\n1. Click "STOP"\n2. Click "Force Stop"\n3. Click "Ok"',
+                    Text(
+                        'Open the app to restart the service\n\n\nHOW TO STOP SERVICE\n---------------------------------------\n1. Click "STOP"\n2. Click "Force Stop"\n3. Click "Ok"'),
                     "STOP", () {
                   openAppSettings();
                 });
@@ -171,6 +170,7 @@ class _SettingsState extends State<Settings>
 
   void setMax(String text) async {
     int charge = int.parse(text);
+    Provider.of<BatteryProvider>(context, listen: false).setMaxCharge(charge);
     await platform.invokeMethod("setMax", {"charge": charge});
   }
 
@@ -192,97 +192,62 @@ class _SettingsState extends State<Settings>
 
   // Change max battery
   changeMaxBattery() {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        TextEditingController controller = new TextEditingController();
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text(
-            'Set max charge',
-            style: TextStyle(color: Colors.black),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2, color: Colors.green),
-                        borderRadius: BorderRadius.circular(30)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2, color: Colors.green),
-                        borderRadius: BorderRadius.circular(30)),
-                    hintText: "Enter your max charge",
-                    hintStyle: TextStyle(fontSize: 17, color: Colors.green),
-                  ),
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.green),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            MaterialButton(
-              color: Colors.green,
-              onPressed: () {
-                try {
-                  if (controller.text != "") {
-                    int charge = int.parse(controller.text);
-                    if (charge <= 100) {
-                      if (charge > 2) {
-                        setMax(controller.text);
-                        Navigator.pop(context);
-                        Provider.of<BatteryProvider>(context, listen: false)
-                            .setMaxCharge(charge);
-                      } else {
-                        dialog(context, "Wrong", "This is not supported", "OK",
-                            () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        });
-                      }
-                    } else {
-                      dialog(context, "Wrong", "This is not supported", "OK",
-                          () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      });
-                    }
-                  } else {
-                    dialog(context, "Wrong", "This is not supported", "OK", () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    });
-                  }
-                } on Exception {
-                  dialog(context, "Wrong", "This is not supported", "OK", () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  });
-                }
-              },
-              child: Text(
-                'Set',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
+    TextEditingController controller = new TextEditingController();
+    dialog(
+      context,
+      "Set max charge",
+      TextField(
+        controller: controller,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+              borderSide: BorderSide(width: 2, color: Colors.green),
+              borderRadius: BorderRadius.circular(30)),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 2, color: Colors.green),
+              borderRadius: BorderRadius.circular(30)),
+          hintText: "Enter your max charge",
+          hintStyle: TextStyle(fontSize: 17, color: Colors.green),
+        ),
+        style: TextStyle(
+            fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+      ),
+      "Set",
+      () {
+        try {
+          if (controller.text != "") {
+            int charge = int.parse(controller.text);
+            if (charge <= 100) {
+              if (charge > 2) {
+                setMax(controller.text);
+                Navigator.pop(context);
+                Provider.of<BatteryProvider>(context, listen: false)
+                    .setMaxCharge(charge);
+              } else {
+                dialog(context, "Wrong", Text("This is not supported"), "OK",
+                    () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
+              }
+            } else {
+              dialog(context, "Wrong", Text("This is not supported"), "OK", () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              });
+            }
+          } else {
+            dialog(context, "Wrong", Text("This is not supported"), "OK", () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            });
+          }
+        } on Exception {
+          dialog(context, "Wrong", Text("This is not supported"), "OK", () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          });
+        }
       },
     );
   }
