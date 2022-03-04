@@ -116,8 +116,5 @@ class _HomeScreenState extends State<HomeScreen>
     if (await Permission.storage.isDenied) {
       await Permission.storage.request();
     }
-    if (await Permission.systemAlertWindow.isDenied) {
-      await Permission.systemAlertWindow.request();
-    }
   }
 }

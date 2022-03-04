@@ -25,22 +25,11 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
-    public static WindowManager windowManager;
-    public static LayoutInflater layoutInflater;
-    public static View view;
     public static MediaPlayer mediaPlayer = new MediaPlayer();
     private static final String CHANNEL = "battery";
     public static SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     Intent actionBatteryChangedIntent;
-
-    public static void turnScreenOn(Context context) {
-        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |
-                PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                PowerManager.ON_AFTER_RELEASE, "appname::WakeLock");
-        wakeLock.acquire();
-    }
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -105,10 +94,6 @@ public class MainActivity extends FlutterActivity {
                 startActivity(intent);
             }
         }
-
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        layoutInflater = LayoutInflater.from(getApplicationContext());
-        view = MainActivity.layoutInflater.inflate(R.layout.layout, null);
 
         sharedpreferences = getSharedPreferences("Battery", Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
